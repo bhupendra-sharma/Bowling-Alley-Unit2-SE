@@ -34,13 +34,6 @@ public class Bowler {
   	email = mail;
     }
 
-
-    public String getNickName() {
-
-        return nickName;  
-
-    }
-
 	public String getFullName ( ) {
 			return fullName;
 	}
