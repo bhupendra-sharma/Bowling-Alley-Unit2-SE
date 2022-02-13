@@ -1,6 +1,6 @@
 /**
  * 
- * SMTP implementation based on code by Réal Gagnon mailto:real@rgagnon.com
+ * SMTP implementation based on code by Rï¿½al Gagnon mailto:real@rgagnon.com
  * 
  */
 
@@ -15,13 +15,32 @@ import java.awt.print.*;
 public class ScoreReport {
 
 	private String content;
-	
+
+	private static String SCOREHISTORY_DAT = "SCOREHISTORY.DAT";
+
+	public static Vector getScores(String nick)
+			throws IOException, FileNotFoundException {
+		Vector scores = new Vector();
+
+		BufferedReader in =
+				new BufferedReader(new FileReader(SCOREHISTORY_DAT));
+		String data;
+		while ((data = in.readLine()) != null) {
+			// File format is nick\tfname\te-mail
+			String[] scoredata = data.split("\t");
+			//"Nick: scoredata[0] Date: scoredata[1] Score: scoredata[2]
+			if (nick.equals(scoredata[0])) {
+				scores.add(new Score(scoredata[0], scoredata[1], scoredata[2]));
+			}
+		}
+		return scores;
+	}
 	public ScoreReport( Bowler bowler, int[] scores, int games ) {
 		String nick = bowler.getNick();
 		String full = bowler.getFullName();
 		Vector v = null;
 		try{
-			v = ScoreHistoryFile.getScores(nick);
+			v = getScores(nick);
 		} catch (Exception e){System.err.println("Error: " + e);}
 		
 		Iterator scoreIt = v.iterator();

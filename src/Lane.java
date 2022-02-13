@@ -131,6 +131,9 @@
  * 
  */
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.util.Vector;
 import java.util.Iterator;
 import java.util.HashMap;
@@ -168,6 +171,20 @@ public class Lane extends Thread implements PinsetterObserver {
 	 * @pre none
 	 * @post a new lane has been created and its thered is executing
 	 */
+
+	private static String SCOREHISTORY_DAT = "SCOREHISTORY.DAT";
+
+	public static void addScore(String nick, String date, String score)
+			throws IOException, FileNotFoundException {
+
+		String data = nick + "\t" + date + "\t" + score + "\n";
+
+		RandomAccessFile out = new RandomAccessFile(SCOREHISTORY_DAT, "rw");
+		out.skipBytes((int) out.length());
+		out.writeBytes(data);
+		out.close();
+	}
+
 	public Lane() { 
 		setter = new Pinsetter();
 		scores = new HashMap();
@@ -216,7 +233,7 @@ public class Lane extends Thread implements PinsetterObserver {
 						try{
 						Date date = new Date();
 						String dateString = "" + date.getHours() + ":" + date.getMinutes() + " " + date.getMonth() + "/" + date.getDay() + "/" + (date.getYear() + 1900);
-						ScoreHistoryFile.addScore(currentThrower.getNick(), dateString, new Integer(cumulScores[bowlIndex][9]).toString());
+						addScore(currentThrower.getNick(), dateString, new Integer(cumulScores[bowlIndex][9]).toString());
 						} catch (Exception e) {System.err.println("Exception in addScore. "+ e );} 
 					}
 
