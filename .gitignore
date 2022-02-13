@@ -2,3 +2,4 @@ out/
 codemr/
 .idea
 *.class
+*.iml
