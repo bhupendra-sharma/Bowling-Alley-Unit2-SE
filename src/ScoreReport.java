@@ -18,7 +18,7 @@ public class ScoreReport {
 
 	private static String SCOREHISTORY_DAT = "SCOREHISTORY.DAT";
 
-	public static Vector getScores(String nick)
+	private static Vector getScores(String nick)
 			throws IOException, FileNotFoundException {
 		Vector scores = new Vector();
 

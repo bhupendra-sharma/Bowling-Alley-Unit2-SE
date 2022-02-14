@@ -174,7 +174,7 @@ public class Lane extends Thread implements PinsetterObserver {
 
 	private static String SCOREHISTORY_DAT = "SCOREHISTORY.DAT";
 
-	public static void addScore(String nick, String date, String score)
+	private static void addScore(String nick, String date, String score)
 			throws IOException, FileNotFoundException {
 
 		String data = nick + "\t" + date + "\t" + score + "\n";
