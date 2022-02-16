@@ -137,14 +137,7 @@ class ControlDesk extends Thread {
 				curLane.assignParty(((Party) partyQueue.next()));
 			}
 		}
-		publish(new ControlDeskEvent(getPartyQueue()));
-	}
-
-    /**
-     */
-
-	public void viewScores(Lane ln) {
-		// TODO: attach a LaneScoreView object to that lane
+		publish(getPartyQueue());
 	}
 
     /**
@@ -162,7 +155,7 @@ class ControlDesk extends Thread {
 		}
 		Party newParty = new Party(partyBowlers);
 		partyQueue.add(newParty);
-		publish(new ControlDeskEvent(getPartyQueue()));
+		publish(getPartyQueue());
 	}
 
     /**
@@ -202,25 +195,25 @@ class ControlDesk extends Thread {
      *
      */
 
-	public void subscribe(ControlDeskObserver adding) {
+	public void subscribe(EventObserver adding) {
 		subscribers.add(adding);
 	}
 
     /**
      * Broadcast an event to subscribing objects.
      * 
-     * @param event	the ControlDeskEvent to broadcast
+     * @param eventObject	the ControlDeskEvent to broadcast
      *
      */
 
-	public void publish(ControlDeskEvent event) {
+	public void publish(Vector eventObject) {
 		Iterator eventIterator = subscribers.iterator();
 		while (eventIterator.hasNext()) {
 			(
-				(ControlDeskObserver) eventIterator
+				(EventObserver) eventIterator
 					.next())
-					.receiveControlDeskEvent(
-				event);
+					.receiveEvent(
+				eventObject);
 		}
 	}
 

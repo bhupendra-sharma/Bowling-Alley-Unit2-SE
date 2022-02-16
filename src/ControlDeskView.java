@@ -21,7 +21,7 @@ import javax.swing.event.*;
 
 import java.util.*;
 
-public class ControlDeskView implements ActionListener, ControlDeskObserver {
+public class ControlDeskView implements ActionListener, EventObserver{
 
 	private JButton addParty, finished, assign;
 	private JFrame win;
@@ -167,14 +167,10 @@ public class ControlDeskView implements ActionListener, ControlDeskObserver {
 		controlDesk.addPartyQueue(addPartyView.getParty());
 	}
 
-	/**
-	 * Receive a broadcast from a ControlDesk
-	 *
-	 * @param ce	the ControlDeskEvent that triggered the handler
-	 *
-	 */
-
-	public void receiveControlDeskEvent(ControlDeskEvent ce) {
-		partyList.setListData(((Vector) ce.getPartyQueue()));
+	public void receiveEvent(Object eventObject){
+		if(eventObject instanceof Vector){
+			partyList.setListData((Vector)eventObject);
+		}
 	}
+
 }

@@ -98,7 +98,7 @@ public class Pinsetter {
 	 * @pre none
 	 * @post all subscribers have recieved pinsetter event with updated state
 	 * */
-	private void sendEvent(int jdpins) {	// send events when our state is changd
+	private void sendEvent(int jdpins) {	// send events when our state is changed
 		for (int i=0; i < subscribers.size(); i++) {
 			((PinsetterObserver)subscribers.get(i)).receivePinsetterEvent(
 				new PinsetterEvent(pins, foul, throwNumber, jdpins));
