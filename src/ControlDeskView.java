@@ -159,12 +159,12 @@ public class ControlDeskView implements ActionListener, EventObserver{
 	/**
 	 * Receive a new party from andPartyView.
 	 *
-	 * @param addPartyView	the AddPartyView that is providing a new party
+	 * @param party representing vector of members in a party
 	 *
 	 */
 
-	public void updateAddParty(AddPartyView addPartyView) {
-		controlDesk.addPartyQueue(addPartyView.getParty());
+	public void updateAddParty(Vector party) {
+		controlDesk.addPartyQueue(party);
 	}
 
 	public void receiveEvent(Object eventObject){

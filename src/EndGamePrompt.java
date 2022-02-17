@@ -101,7 +101,7 @@ public class EndGamePrompt implements ActionListener {
 		return result;	
 	}
 	
-	public void distroy() {
+	public void destroy() {
 		win.hide();
 	}
 	

@@ -37,7 +37,7 @@ class BowlerFile {
      */
 
 	public static Bowler getBowlerInfo(String nickName)
-		throws IOException, FileNotFoundException {
+		throws IOException{
 
 		BufferedReader in = new BufferedReader(new FileReader(BOWLER_DAT));
 		String data;
@@ -104,5 +104,19 @@ class BowlerFile {
 		}
 		return allBowlers;
 	}
+
+	private static String SCOREHISTORY_DAT = "SCOREHISTORY.DAT";
+
+	public static void addScore(String nick, String date, String score)
+			throws IOException, FileNotFoundException {
+
+		String data = nick + "\t" + date + "\t" + score + "\n";
+
+		RandomAccessFile out = new RandomAccessFile(SCOREHISTORY_DAT, "rw");
+		out.skipBytes((int) out.length());
+		out.writeBytes(data);
+		out.close();
+	}
+
 
 }

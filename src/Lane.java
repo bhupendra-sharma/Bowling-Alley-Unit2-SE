@@ -172,18 +172,6 @@ public class Lane extends Thread implements EventObserver {
 	 * @post a new lane has been created and its thered is executing
 	 */
 
-	private static String SCOREHISTORY_DAT = "SCOREHISTORY.DAT";
-
-	private static void addScore(String nick, String date, String score)
-			throws IOException, FileNotFoundException {
-
-		String data = nick + "\t" + date + "\t" + score + "\n";
-
-		RandomAccessFile out = new RandomAccessFile(SCOREHISTORY_DAT, "rw");
-		out.skipBytes((int) out.length());
-		out.writeBytes(data);
-		out.close();
-	}
 
 	public Lane() { 
 		setter = new Pinsetter();
@@ -233,7 +221,7 @@ public class Lane extends Thread implements EventObserver {
 						try{
 						Date date = new Date();
 						String dateString = "" + date.getHours() + ":" + date.getMinutes() + " " + date.getMonth() + "/" + date.getDay() + "/" + (date.getYear() + 1900);
-						addScore(currentThrower.getNick(), dateString, Integer.toString(cumulScores[bowlIndex][9]));
+						BowlerFile.addScore(currentThrower.getNick(), dateString, Integer.toString(cumulScores[bowlIndex][9]));
 						} catch (Exception e) {System.err.println("Exception in addScore. "+ e );} 
 					}
 
@@ -253,7 +241,7 @@ public class Lane extends Thread implements EventObserver {
 			} else if (partyAssigned && gameFinished) {
 				EndGamePrompt egp = new EndGamePrompt( ((Bowler) party.getMembers().get(0)).getNick() + "'s Party" );
 				int result = egp.getResult();
-				egp.distroy();
+				egp.destroy();
 				egp = null;
 				
 				

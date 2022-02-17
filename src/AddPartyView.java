@@ -48,13 +48,13 @@ public class AddPartyView implements ActionListener, ListSelectionListener {
 	private JList partyList, allBowlers;
 	private Vector party, bowlerdb;
 
-	private ControlDeskView controlDesk;
+	private ControlDeskView controlDeskView;
 
 	private String selectedNick, selectedMember;
 
 	public AddPartyView(ControlDeskView controlDesk, int max) {
 
-		this.controlDesk = controlDesk;
+		this.controlDeskView = controlDesk;
 		maxSize = max;
 
 		win = new JFrame("Add Party");
@@ -176,7 +176,7 @@ public class AddPartyView implements ActionListener, ListSelectionListener {
 		}
 		if (e.getSource().equals(finished)) {
 			if ( party != null && party.size() > 0) {
-				controlDesk.updateAddParty( this );
+				controlDeskView.updateAddParty( this.getParty());
 			}
 			win.hide();
 		}
@@ -202,20 +202,20 @@ public class AddPartyView implements ActionListener, ListSelectionListener {
 	/**
  * Called by NewPatronView to notify AddPartyView to update
  * 
- * @param newPatron the NewPatronView that called this method
+ * @param nickName, fullName, emailId the NewPatronView that called this method
  */
 
-	public void updateNewPatron(NewPatronView newPatron) {
+	public void updateNewPatron(String nickName, String fullName, String emailId) {
 		try {
-			Bowler checkBowler = BowlerFile.getBowlerInfo( newPatron.getNick() );
+			Bowler checkBowler = BowlerFile.getBowlerInfo( nickName );
 			if ( checkBowler == null ) {
 				BowlerFile.putBowlerInfo(
-					newPatron.getNick(),
-					newPatron.getFull(),
-					newPatron.getEmail());
+					nickName,
+					fullName,
+					emailId);
 				bowlerdb = new Vector(BowlerFile.getBowlers());
 				allBowlers.setListData(bowlerdb);
-				party.add(newPatron.getNick());
+				party.add(nickName);
 				partyList.setListData(party);
 			} else {
 				System.err.println( "A Bowler with that name already exists." );

@@ -131,22 +131,9 @@ public class NewPatronView implements ActionListener {
 			full = fullField.getText();
 			email = emailField.getText();
 			done = true;
-			addParty.updateNewPatron( this );
+			addParty.updateNewPatron( nick, full, email);
 			win.hide();
 		}
-
-	}
-
-	public String getNick() {
-		return nick;
-	}
-
-	public String getFull() {
-		return full;
-	}
-
-	public String getEmail() {
-		return email;
 	}
 
 }
