@@ -1,10 +1,10 @@
-/* BowlerFile.java
+/* FileUtils.java
  *
  *  Version:
  *  		$Id$
  * 
  *  Revisions:
- * 		$Log: BowlerFile.java,v $
+ * 		$Log: FileUtils.java,v $
  * 		Revision 1.5  2003/02/02 17:36:45  ???
  * 		Updated comments to match javadoc format.
  * 		
@@ -22,7 +22,7 @@
 import java.util.*;
 import java.io.*;
 
-class BowlerFile {
+class FileUtils {
 
 	/** The location of the bowelr database */
 	private static String BOWLER_DAT = "BOWLERS.DAT";
@@ -35,7 +35,25 @@ class BowlerFile {
      * @return a Bowler object
      * 
      */
+	private static String SCOREHISTORY_DAT = "SCOREHISTORY.DAT";
 
+	public static Vector getScores(String nick)
+			throws IOException, FileNotFoundException {
+		Vector scores = new Vector();
+
+		BufferedReader in =
+				new BufferedReader(new FileReader(SCOREHISTORY_DAT));
+		String data;
+		while ((data = in.readLine()) != null) {
+			// File format is nick\tfname\te-mail
+			String[] scoredata = data.split("\t");
+			//"Nick: scoredata[0] Date: scoredata[1] Score: scoredata[2]
+			if (nick.equals(scoredata[0])) {
+				scores.add(new Score(scoredata[0], scoredata[1], scoredata[2]));
+			}
+		}
+		return scores;
+	}
 	public static Bowler getBowlerInfo(String nickName)
 		throws IOException{
 
@@ -105,7 +123,6 @@ class BowlerFile {
 		return allBowlers;
 	}
 
-	private static String SCOREHISTORY_DAT = "SCOREHISTORY.DAT";
 
 	public static void addScore(String nick, String date, String score)
 			throws IOException, FileNotFoundException {

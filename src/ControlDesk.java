@@ -213,7 +213,7 @@ class ControlDesk extends Thread {
 		Bowler patron = null;
 		try {
 			// only one patron / nick.... no dupes, no checks
-			patron = BowlerFile.getBowlerInfo(nickName);
+			patron = FileUtils.getBowlerInfo(nickName);
 		} catch (IOException e) {
 			System.err.println("Error..." + e);
 		}
