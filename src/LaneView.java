@@ -8,7 +8,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import java.util.*;
 
-public class LaneView implements EventObserver, ActionListener {
+public class LaneView implements EventObserver {
 
 	private int roll;
 	private boolean initDone = true;
@@ -150,7 +150,12 @@ public class LaneView implements EventObserver, ActionListener {
 				maintenance = new JButton("Maintenance Call");
 				JPanel maintenancePanel = new JPanel();
 				maintenancePanel.setLayout(new FlowLayout());
-				maintenance.addActionListener(this);
+				maintenance.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent actionEvent) {
+						lane.pauseGame();
+					}
+				});
 				maintenancePanel.add(maintenance);
 
 				buttonPanel.add(maintenancePanel);
@@ -201,10 +206,5 @@ public class LaneView implements EventObserver, ActionListener {
 	}
 	}
 
-	public void actionPerformed(ActionEvent e) {
-		if (e.getSource().equals(maintenance)) {
-			lane.pauseGame();
-		}
-	}
 
 }

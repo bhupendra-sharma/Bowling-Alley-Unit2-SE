@@ -21,12 +21,12 @@ import javax.swing.event.*;
 
 import java.util.*;
 
-public class ControlDeskView implements ActionListener, EventObserver{
+public class ControlDeskView implements  EventObserver{
 
 	private JButton addParty, finished, assign;
 	private JFrame win;
 	private JList partyList;
-	
+	private ControlDeskView cdv=this;
 	/** The maximum  number of members in a party */
 	private int maxMembers;
 	
@@ -58,21 +58,37 @@ public class ControlDeskView implements ActionListener, EventObserver{
 		addParty = new JButton("Add Party");
 		JPanel addPartyPanel = new JPanel();
 		addPartyPanel.setLayout(new FlowLayout());
-		addParty.addActionListener(this);
+		addParty.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent actionEvent) {
+				AddPartyView addPartyWin = new AddPartyView(cdv, maxMembers);
+			}
+		});
 		addPartyPanel.add(addParty);
 		controlsPanel.add(addPartyPanel);
 
 		assign = new JButton("Assign Lanes");
 		JPanel assignPanel = new JPanel();
 		assignPanel.setLayout(new FlowLayout());
-		assign.addActionListener(this);
+		assign.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent actionEvent) {
+				controlDesk.assignLane();
+			}
+		});
 		assignPanel.add(assign);
 //		controlsPanel.add(assignPanel);
 
 		finished = new JButton("Finished");
 		JPanel finishedPanel = new JPanel();
 		finishedPanel.setLayout(new FlowLayout());
-		finished.addActionListener(this);
+		finished.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent actionEvent) {
+				win.hide();
+				System.exit(0);
+			}
+		});
 		finishedPanel.add(finished);
 		controlsPanel.add(finishedPanel);
 
@@ -143,18 +159,6 @@ public class ControlDeskView implements ActionListener, EventObserver{
 	 *
 	 */
 
-	public void actionPerformed(ActionEvent e) {
-		if (e.getSource().equals(addParty)) {
-			AddPartyView addPartyWin = new AddPartyView(this, maxMembers);
-		}
-		if (e.getSource().equals(assign)) {
-			controlDesk.assignLane();
-		}
-		if (e.getSource().equals(finished)) {
-			win.hide();
-			System.exit(0);
-		}
-	}
 
 	/**
 	 * Receive a new party from andPartyView.

@@ -12,13 +12,12 @@ import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.event.*;
 
-public class LaneStatusView implements EventObserver, ActionListener {
+public class LaneStatusView implements EventObserver {
 
 	private JPanel jp;
 
 	private JLabel curBowler, foul, pinsDown;
-	private JButton viewLane;
-	private JButton viewPinSetter, maintenance;
+	private JButton viewLane, viewPinSetter, maintenance;
 
 	private PinSetterView psv;
 	private LaneView lv;
@@ -62,20 +61,56 @@ public class LaneStatusView implements EventObserver, ActionListener {
 		viewLane = new JButton("View Lane");
 		JPanel viewLanePanel = new JPanel();
 		viewLanePanel.setLayout(new FlowLayout());
-		viewLane.addActionListener(this);
+		viewLane.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent actionEvent) {
+				if ( lane.isPartyAssigned() ) {
+					if ( laneShowing == false ) {
+						lv.show();
+						laneShowing=true;
+					} else if ( laneShowing == true ) {
+						lv.hide();
+						laneShowing=false;
+					}
+				}
+			}
+		});
 		viewLanePanel.add(viewLane);
 
 		viewPinSetter = new JButton("Pinsetter");
 		JPanel viewPinSetterPanel = new JPanel();
 		viewPinSetterPanel.setLayout(new FlowLayout());
-		viewPinSetter.addActionListener(this);
+		viewPinSetter.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent actionEvent) {
+				if ( lane.isPartyAssigned() ) {
+
+						if ( psShowing == false ) {
+							psv.show();
+							psShowing=true;
+						} else if ( psShowing == true ) {
+							psv.hide();
+							psShowing=false;
+						}
+
+				}
+			}
+		});
 		viewPinSetterPanel.add(viewPinSetter);
 
 		maintenance = new JButton("     ");
 		maintenance.setBackground( Color.GREEN );
 		JPanel maintenancePanel = new JPanel();
 		maintenancePanel.setLayout(new FlowLayout());
-		maintenance.addActionListener(this);
+		maintenance.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent actionEvent) {
+				if ( lane.isPartyAssigned() ) {
+					lane.unPauseGame();
+					maintenance.setBackground( Color.GREEN );
+				}
+			}
+		});
 		maintenancePanel.add(maintenance);
 
 		viewLane.setEnabled( false );
@@ -101,36 +136,6 @@ public class LaneStatusView implements EventObserver, ActionListener {
 		return jp;
 	}
 
-	public void actionPerformed( ActionEvent e ) {
-		if ( lane.isPartyAssigned() ) { 
-			if (e.getSource().equals(viewPinSetter)) {
-				if ( psShowing == false ) {
-					psv.show();
-					psShowing=true;
-				} else if ( psShowing == true ) {
-					psv.hide();
-					psShowing=false;
-				}
-			}
-		}
-		if (e.getSource().equals(viewLane)) {
-			if ( lane.isPartyAssigned() ) { 
-				if ( laneShowing == false ) {
-					lv.show();
-					laneShowing=true;
-				} else if ( laneShowing == true ) {
-					lv.hide();
-					laneShowing=false;
-				}
-			}
-		}
-		if (e.getSource().equals(maintenance)) {
-			if ( lane.isPartyAssigned() ) {
-				lane.unPauseGame();
-				maintenance.setBackground( Color.GREEN );
-			}
-		}
-	}
 
 	public void receiveEvent(Object eventObject){
 		if(eventObject instanceof Pinsetter){

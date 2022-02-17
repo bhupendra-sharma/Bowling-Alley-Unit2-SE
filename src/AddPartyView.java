@@ -39,10 +39,10 @@ import java.text.*;
  *  
  */
 
-public class AddPartyView implements ActionListener, ListSelectionListener {
+public class AddPartyView implements  ListSelectionListener {
 
 	private int maxSize;
-
+	private AddPartyView apv=this;
 	private JFrame win;
 	private JButton addPatron, newPatron, remPatron, finished;
 	private JList partyList, allBowlers;
@@ -110,25 +110,58 @@ public class AddPartyView implements ActionListener, ListSelectionListener {
 		addPatron = new JButton("Add to Party");
 		JPanel addPatronPanel = new JPanel();
 		addPatronPanel.setLayout(new FlowLayout());
-		addPatron.addActionListener(this);
+		addPatron.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent actionEvent) {
+				if (selectedNick != null && party.size() < maxSize) {
+					if (party.contains(selectedNick)) {
+						System.err.println("Member already in Party");
+					} else {
+						party.add(selectedNick);
+						partyList.setListData(party);
+					}
+				}
+			}
+		});
 		addPatronPanel.add(addPatron);
 
 		remPatron = new JButton("Remove Member");
 		JPanel remPatronPanel = new JPanel();
 		remPatronPanel.setLayout(new FlowLayout());
-		remPatron.addActionListener(this);
+		remPatron.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent actionEvent) {
+				if (selectedMember != null) {
+					party.removeElement(selectedMember);
+					partyList.setListData(party);
+				}
+			}
+		});
 		remPatronPanel.add(remPatron);
 
 		newPatron = new JButton("New Patron");
 		JPanel newPatronPanel = new JPanel();
 		newPatronPanel.setLayout(new FlowLayout());
-		newPatron.addActionListener(this);
+		newPatron.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent actionEvent) {
+				NewPatronView newPatron = new NewPatronView( apv );
+			}
+		});
 		newPatronPanel.add(newPatron);
 
 		finished = new JButton("Finished");
 		JPanel finishedPanel = new JPanel();
 		finishedPanel.setLayout(new FlowLayout());
-		finished.addActionListener(this);
+		finished.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent actionEvent) {
+				if ( party != null && party.size() > 0) {
+					controlDeskView.updateAddParty( apv.getParty());
+				}
+				win.hide();
+			}
+		});
 		finishedPanel.add(finished);
 
 		buttonPanel.add(addPatronPanel);
@@ -154,34 +187,6 @@ public class AddPartyView implements ActionListener, ListSelectionListener {
 
 	}
 
-	public void actionPerformed(ActionEvent e) {
-		if (e.getSource().equals(addPatron)) {
-			if (selectedNick != null && party.size() < maxSize) {
-				if (party.contains(selectedNick)) {
-					System.err.println("Member already in Party");
-				} else {
-					party.add(selectedNick);
-					partyList.setListData(party);
-				}
-			}
-		}
-		if (e.getSource().equals(remPatron)) {
-			if (selectedMember != null) {
-				party.removeElement(selectedMember);
-				partyList.setListData(party);
-			}
-		}
-		if (e.getSource().equals(newPatron)) {
-			NewPatronView newPatron = new NewPatronView( this );
-		}
-		if (e.getSource().equals(finished)) {
-			if ( party != null && party.size() > 0) {
-				controlDeskView.updateAddParty( this.getParty());
-			}
-			win.hide();
-		}
-
-	}
 
 /**
  * Handler for List actions

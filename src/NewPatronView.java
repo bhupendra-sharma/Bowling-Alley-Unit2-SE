@@ -25,7 +25,7 @@ import javax.swing.event.*;
 import java.util.*;
 import java.text.*;
 
-public class NewPatronView implements ActionListener {
+public class NewPatronView {
 
 	private int maxSize;
 
@@ -91,13 +91,29 @@ public class NewPatronView implements ActionListener {
 		finished = new JButton("Add Patron");
 		JPanel finishedPanel = new JPanel();
 		finishedPanel.setLayout(new FlowLayout());
-		finished.addActionListener(this);
+		finished.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent actionEvent) {
+				nick = nickField.getText();
+				full = fullField.getText();
+				email = emailField.getText();
+				done = true;
+				addParty.updateNewPatron( nick, full, email);
+				win.hide();
+			}
+		});
 		finishedPanel.add(finished);
 
 		abort = new JButton("Abort");
 		JPanel abortPanel = new JPanel();
 		abortPanel.setLayout(new FlowLayout());
-		abort.addActionListener(this);
+		abort.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent actionEvent) {
+				done = true;
+				win.hide();
+			}
+		});
 		abortPanel.add(abort);
 
 		buttonPanel.add(abortPanel);
@@ -120,20 +136,5 @@ public class NewPatronView implements ActionListener {
 
 	}
 
-	public void actionPerformed(ActionEvent e) {
-		if (e.getSource().equals(abort)) {
-			done = true;
-			win.hide();
-		}
-
-		if (e.getSource().equals(finished)) {
-			nick = nickField.getText();
-			full = fullField.getText();
-			email = emailField.getText();
-			done = true;
-			addParty.updateNewPatron( nick, full, email);
-			win.hide();
-		}
-	}
 
 }
