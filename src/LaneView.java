@@ -8,7 +8,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import java.util.*;
 
-public class LaneView implements LaneObserver, ActionListener {
+public class LaneView implements EventObserver, ActionListener {
 
 	private int roll;
 	private boolean initDone = true;
@@ -122,9 +122,10 @@ public class LaneView implements LaneObserver, ActionListener {
 		return panel;
 	}
 
-	public void receiveLaneEvent(LaneEvent le) {
+	public void receiveEvent(Object eventObject) {
+	if(eventObject instanceof Lane) {
 		if (lane.isPartyAssigned()) {
-			int numBowlers = le.getParty().getMembers().size();
+			int numBowlers = ((Lane)eventObject).getParty().getMembers().size();
 			while (!initDone) {
 				//System.out.println("chillin' here.");
 				try {
@@ -133,12 +134,12 @@ public class LaneView implements LaneObserver, ActionListener {
 				}
 			}
 
-			if (le.getFrameNum() == 1
-				&& le.getBall() == 0
-				&& le.getIndex() == 0) {
+			if (((Lane)eventObject).getFrameNum() == 1
+					&& ((Lane)eventObject).getBall() == 0
+					&& ((Lane)eventObject).getIndex() == 0) {
 				System.out.println("Making the frame.");
 				cpanel.removeAll();
-				cpanel.add(makeFrame(le.getParty()), "Center");
+				cpanel.add(makeFrame(((Lane)eventObject).getParty()), "Center");
 
 				// Button Panel
 				JPanel buttonPanel = new JPanel();
@@ -160,44 +161,44 @@ public class LaneView implements LaneObserver, ActionListener {
 
 			}
 
-			int[][] lescores = le.getCumulScore();
+			int[][] lescores = ((Lane)eventObject).getCumulScore();
 			for (int k = 0; k < numBowlers; k++) {
-				for (int i = 0; i <= le.getFrameNum() - 1; i++) {
+				for (int i = 0; i <= ((Lane)eventObject).getFrameNum() - 1; i++) {
 					if (lescores[k][i] != 0)
 						scoreLabel[k][i].setText(
-							(new Integer(lescores[k][i])).toString());
+								(Integer.toString(lescores[k][i])));
 				}
 				for (int i = 0; i < 21; i++) {
-					if (((int[]) ((HashMap) le.getScore())
-						.get(bowlers.get(k)))[i]
-						!= -1)
-						if (((int[]) ((HashMap) le.getScore())
+					if (((int[]) ((HashMap) ((Lane)eventObject).getScore())
 							.get(bowlers.get(k)))[i]
-							== 10
-							&& (i % 2 == 0 || i == 19))
+							!= -1)
+						if (((int[]) ((HashMap) ((Lane)eventObject).getScore())
+								.get(bowlers.get(k)))[i]
+								== 10
+								&& (i % 2 == 0 || i == 19))
 							ballLabel[k][i].setText("X");
 						else if (
-							i > 0
-								&& ((int[]) ((HashMap) le.getScore())
-									.get(bowlers.get(k)))[i]
-									+ ((int[]) ((HashMap) le.getScore())
+								i > 0
+										&& ((int[]) ((HashMap) ((Lane)eventObject).getScore())
+										.get(bowlers.get(k)))[i]
+										+ ((int[]) ((HashMap) ((Lane)eventObject).getScore())
 										.get(bowlers.get(k)))[i
-									- 1]
-									== 10
-								&& i % 2 == 1)
+										- 1]
+										== 10
+										&& i % 2 == 1)
 							ballLabel[k][i].setText("/");
-						else if ( ((int[])((HashMap) le.getScore()).get(bowlers.get(k)))[i] == -2 ){
-							
+						else if (((int[]) ((HashMap) ((Lane)eventObject).getScore()).get(bowlers.get(k)))[i] == -2) {
+
 							ballLabel[k][i].setText("F");
 						} else
 							ballLabel[k][i].setText(
-								(new Integer(((int[]) ((HashMap) le.getScore())
-									.get(bowlers.get(k)))[i]))
-									.toString());
+									(Integer.toString(((int[]) ((HashMap) ((Lane)eventObject).getScore())
+											.get(bowlers.get(k)))[i])));
 				}
 			}
 
 		}
+	}
 	}
 
 	public void actionPerformed(ActionEvent e) {

@@ -19,7 +19,7 @@ import javax.swing.*;
 import java.util.Vector;
 
 
-public class PinSetterView implements PinsetterObserver {
+public class PinSetterView implements EventObserver {
 
 
     private Vector pinVect = new Vector ( );
@@ -171,40 +171,30 @@ public class PinSetterView implements PinsetterObserver {
 	
 //	frame.show();
     }
-    
-    
-    /**
-     * This method receives a pinsetter event.  The event is the current
-     * state of the PinSetter and the method changes how the GUI looks
-     * accordingly.  When pins are "knocked down" the corresponding label
-     * is grayed out.  When it is the second roll, it is indicated by the
-     * appearance of a second yellow box at the top.
-     *
-     * @param e    The state of the pinsetter is sent in this event.
-     */
-    
 
-    public void receivePinsetterEvent(PinsetterEvent pe){
-	if ( !(pe.isFoulCommited()) ) {
-	    	JLabel tempPin = new JLabel ( );
-	    	for ( int c = 0; c < 10; c++ ) {
-				boolean pin = pe.pinKnockedDown ( c );
-				tempPin = (JLabel)pinVect.get ( c );
-				if ( pin ) {
-		    		tempPin.setForeground ( Color.lightGray );
+	public void receiveEvent(Object eventObject){
+		if(eventObject instanceof Pinsetter){
+			if ( !(((Pinsetter) eventObject).isFoul()) ) {
+				JLabel tempPin = new JLabel ( );
+				for ( int c = 0; c < 10; c++ ) {
+					boolean pin = ((Pinsetter) eventObject).isPinKnockedDown(c);
+					tempPin = (JLabel)pinVect.get ( c );
+					if ( pin ) {
+						tempPin.setForeground ( Color.lightGray );
+					}
 				}
-	    	}
-    	}
-		if ( pe.getThrowNumber() == 1 ) {
-	   		 secondRoll.setBackground ( Color.yellow );
+			}
+			if ( ((Pinsetter) eventObject).getThrowNumber() == 1 ) {
+				secondRoll.setBackground ( Color.yellow );
+			}
+			if ( ((Pinsetter) eventObject).getPinsDownInThrow() == -1) {
+				for ( int i = 0; i != 10; i++){
+					((JLabel)pinVect.get(i)).setForeground(Color.black);
+				}
+				secondRoll.setBackground( Color.black);
+			}
 		}
-	if ( pe.pinsDownOnThisThrow() == -1) {
-		for ( int i = 0; i != 10; i++){
-			((JLabel)pinVect.get(i)).setForeground(Color.black);
-		}
-		secondRoll.setBackground( Color.black);
 	}
-    }
     
     public void show() {
     	frame.show();

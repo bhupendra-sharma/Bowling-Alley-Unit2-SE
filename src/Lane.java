@@ -139,7 +139,7 @@ import java.util.Iterator;
 import java.util.HashMap;
 import java.util.Date;
 
-public class Lane extends Thread implements PinsetterObserver {	
+public class Lane extends Thread implements EventObserver {
 	private Party party;
 	private Pinsetter setter;
 	private HashMap scores;
@@ -233,7 +233,7 @@ public class Lane extends Thread implements PinsetterObserver {
 						try{
 						Date date = new Date();
 						String dateString = "" + date.getHours() + ":" + date.getMinutes() + " " + date.getMonth() + "/" + date.getDay() + "/" + (date.getYear() + 1900);
-						addScore(currentThrower.getNick(), dateString, new Integer(cumulScores[bowlIndex][9]).toString());
+						addScore(currentThrower.getNick(), dateString, Integer.toString(cumulScores[bowlIndex][9]));
 						} catch (Exception e) {System.err.println("Exception in addScore. "+ e );} 
 					}
 
@@ -273,13 +273,13 @@ public class Lane extends Thread implements PinsetterObserver {
 					party = null;
 					partyAssigned = false;
 					
-					publish(lanePublish());
+					publish(this);
 					
 					int myIndex = 0;
 					while (scoreIt.hasNext()){
 						Bowler thisBowler = (Bowler)scoreIt.next();
 						ScoreReport sr = new ScoreReport( thisBowler, finalScores[myIndex++], gameNumber );
-						sr.sendEmail(thisBowler.getEmail());
+						//sr.sendEmail(thisBowler.getEmail());
 						Iterator printIt = printVector.iterator();
 						while (printIt.hasNext()){
 							if (thisBowler.getNick() == (String)printIt.next()){
@@ -298,53 +298,46 @@ public class Lane extends Thread implements PinsetterObserver {
 			} catch (Exception e) {}
 		}
 	}
-	
-	/** recievePinsetterEvent()
-	 * 
-	 * recieves the thrown event from the pinsetter
-	 *
-	 * @pre none
-	 * @post the event has been acted upon if desiered
-	 * 
-	 * @param pe 		The pinsetter event that has been received.
-	 */
-	public void receivePinsetterEvent(PinsetterEvent pe) {
-		
-			if (pe.pinsDownOnThisThrow() >=  0) {			// this is a real throw
-				markScore(currentThrower, frameNumber + 1, pe.getThrowNumber(), pe.pinsDownOnThisThrow());
-	
+
+	public void receiveEvent(Object eventObject){
+		if(eventObject instanceof Pinsetter){
+			if (((Pinsetter) eventObject).getPinsDownInThrow() >=  0) {			// this is a real throw
+				markScore(currentThrower, frameNumber + 1, ((Pinsetter)eventObject).getThrowNumber(),
+						((Pinsetter)eventObject).getPinsDownInThrow());
+
 				// next logic handles the ?: what conditions dont allow them another throw?
 				// handle the case of 10th frame first
 				if (frameNumber == 9) {
-					if (pe.totalPinsDown() == 10) {
+					if (((Pinsetter)eventObject).totalPinsDown() == 10) {
 						setter.resetPins();
-						if(pe.getThrowNumber() == 1) {
+						if(((Pinsetter)eventObject).getThrowNumber() == 1) {
 							tenthFrameStrike = true;
 						}
 					}
-				
-					if ((pe.totalPinsDown() != 10) && (pe.getThrowNumber() == 2 && tenthFrameStrike == false)) {
+
+					if ((((Pinsetter)eventObject).totalPinsDown() != 10) &&
+							(((Pinsetter)eventObject).getThrowNumber() == 2 && !tenthFrameStrike)) {
 						canThrowAgain = false;
 						//publish( lanePublish() );
 					}
-				
-					if (pe.getThrowNumber() == 3) {
+
+					if (((Pinsetter)eventObject).getThrowNumber() == 3) {
 						canThrowAgain = false;
 						//publish( lanePublish() );
 					}
 				} else { // its not the 10th frame
-			
-					if (pe.pinsDownOnThisThrow() == 10) {		// threw a strike
+
+					if (((Pinsetter)eventObject).getPinsDownInThrow() == 10) {		// threw a strike
 						canThrowAgain = false;
 						//publish( lanePublish() );
-					} else if (pe.getThrowNumber() == 2) {
+					} else if (((Pinsetter)eventObject).getThrowNumber() == 2) {
 						canThrowAgain = false;
 						//publish( lanePublish() );
-					} else if (pe.getThrowNumber() == 3)  
+					} else if (((Pinsetter)eventObject).getThrowNumber() == 3)
 						System.out.println("I'm here...");
 				}
-			} else {								//  this is not a real throw, probably a reset
 			}
+		}
 	}
 	
 	/** resetBowlerIterator()
@@ -423,18 +416,7 @@ public class Lane extends Thread implements PinsetterObserver {
 		curScore[ index - 1] = score;
 		scores.put(Cur, curScore);
 		getScore( Cur, frame );
-		publish( lanePublish() );
-	}
-
-	/** lanePublish()
-	 *
-	 * Method that creates and returns a newly created laneEvent
-	 * 
-	 * @return		The new lane event
-	 */
-	private LaneEvent lanePublish(  ) {
-		LaneEvent laneEvent = new LaneEvent(party, bowlIndex, currentThrower, cumulScores, scores, frameNumber+1, curScores, ball, gameIsHalted);
-		return laneEvent;
+		publish( this );
 	}
 
 	/** getScore()
@@ -569,7 +551,7 @@ public class Lane extends Thread implements PinsetterObserver {
 	 * @param adding	Observer that is to be added
 	 */
 
-	public void subscribe( LaneObserver adding ) {
+	public void subscribe( EventObserver adding ) {
 		subscribers.add( adding );
 	}
 
@@ -577,15 +559,15 @@ public class Lane extends Thread implements PinsetterObserver {
 	 *
 	 * Method that publishes an event to subscribers
 	 * 
-	 * @param event	Event that is to be published
+	 * @param lane	Event that is to be published
 	 */
 
-	public void publish( LaneEvent event ) {
+	public void publish( Lane lane ) {
 		if( subscribers.size() > 0 ) {
 			Iterator eventIterator = subscribers.iterator();
 			
 			while ( eventIterator.hasNext() ) {
-				( (LaneObserver) eventIterator.next()).receiveLaneEvent( event );
+				( (EventObserver) eventIterator.next()).receiveEvent( lane );
 			}
 		}
 	}
@@ -605,7 +587,7 @@ public class Lane extends Thread implements PinsetterObserver {
 	 */
 	public void pauseGame() {
 		gameIsHalted = true;
-		publish(lanePublish());
+		publish(this);
 	}
 	
 	/**
@@ -613,7 +595,40 @@ public class Lane extends Thread implements PinsetterObserver {
 	 */
 	public void unPauseGame() {
 		gameIsHalted = false;
-		publish(lanePublish());
+		publish(this);
+	}
+
+	public int getFrameNum() {
+		return frameNumber+1;
+	}
+
+	public HashMap getScore( ) {
+		return scores;
+	}
+
+
+	public int getIndex() {
+		return bowlIndex;
+	}
+
+	public int getBall( ) {
+		return ball;
+	}
+
+	public int[][] getCumulScore(){
+		return cumulScores;
+	}
+
+	public Party getParty() {
+		return party;
+	}
+
+	public Bowler getBowler() {
+		return currentThrower;
+	}
+
+	public boolean isMechanicalProblem(){
+		return gameIsHalted;
 	}
 
 }

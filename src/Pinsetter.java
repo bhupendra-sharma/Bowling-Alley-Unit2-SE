@@ -90,6 +90,7 @@ public class Pinsetter {
 			*/
 	private boolean foul;
 	private int throwNumber;
+	private int pinsDownInThrow;
 
 	/** sendEvent()
 	 * 
@@ -98,10 +99,9 @@ public class Pinsetter {
 	 * @pre none
 	 * @post all subscribers have recieved pinsetter event with updated state
 	 * */
-	private void sendEvent(int jdpins) {	// send events when our state is changed
+	private void sendEvent() {	// send events when our state is changed
 		for (int i=0; i < subscribers.size(); i++) {
-			((PinsetterObserver)subscribers.get(i)).receivePinsetterEvent(
-				new PinsetterEvent(pins, foul, throwNumber, jdpins));
+			((EventObserver)subscribers.get(i)).receiveEvent(this);
 		}
 	}
 
@@ -151,7 +151,9 @@ public class Pinsetter {
 			Thread.sleep(500);				// pinsetter is where delay will be in a real game
 		} catch (Exception e) {}
 
-		sendEvent(count);
+		pinsDownInThrow = count;
+
+		sendEvent();
 
 		throwNumber++;
 	}
@@ -166,13 +168,14 @@ public class Pinsetter {
 	public void reset() {
 		foul = false;
 		throwNumber = 1;
+		pinsDownInThrow = -1;
 		resetPins();
 		
 		try {
 			Thread.sleep(1000);
 		} catch (Exception e) {}
 		
-		sendEvent(-1);
+		sendEvent();
 	}
 
 	/** resetPins()
@@ -195,9 +198,36 @@ public class Pinsetter {
 	 * @pre none
 	 * @post the subscriber object will recieve events when their generated
 	 */
-	public void subscribe(PinsetterObserver subscriber) {
+	public void subscribe(EventObserver subscriber) {
 		subscribers.add(subscriber);
 	}
+
+	public boolean isFoul(){
+		return foul;
+	}
+
+	public int getThrowNumber(){
+		return throwNumber;
+	}
+
+	public int getPinsDownInThrow(){
+		return pinsDownInThrow;
+	}
+
+	public boolean isPinKnockedDown(int i){
+		return !pins[i];
+	}
+
+	public int totalPinsDown() {
+		int count = 0;
+		for (int i=0; i <= 9; i++) {
+			if (isPinKnockedDown(i)) {
+				count++;
+			}
+		}
+		return count;
+	}
+
 
 };
 
