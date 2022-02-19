@@ -2,10 +2,10 @@ import java.util.HashMap;
 
 public class CalculateScore {
 
-    private int ball;
-    private HashMap scores;
-    private int[][] cumulScores;
-    private int bowlIndex;
+    private final int ball;
+    private final HashMap scores;
+    private final int[][] cumulScores;
+    private final int bowlIndex;
 
     public CalculateScore(int ball, HashMap scores, int[][] cumulScores, int bowlIndex) {
         this.ball = ball;

@@ -27,24 +27,17 @@ import java.text.*;
 
 public class NewPatronView {
 
-	private int maxSize;
-
-	private JFrame win;
-	private JButton abort, finished;
-	private JLabel nickLabel, fullLabel, emailLabel;
-	private JTextField nickField, fullField, emailField;
+	private final JFrame win;
+	private final JTextField nickField;
+	private final JTextField fullField;
+	private final JTextField emailField;
 	private String nick, full, email;
 
-	private boolean done;
-
-	private String selectedNick, selectedMember;
-	private AddPartyView addParty;
+	private final AddPartyView addParty;
 
 	public NewPatronView(AddPartyView v) {
 
-		addParty=v;	
-		done = false;
-
+		addParty=v;
 		win = new JFrame("Add Patron");
 		win.getContentPane().setLayout(new BorderLayout());
 		((JPanel) win.getContentPane()).setOpaque(false);
@@ -59,21 +52,21 @@ public class NewPatronView {
 
 		JPanel nickPanel = new JPanel();
 		nickPanel.setLayout(new FlowLayout());
-		nickLabel = new JLabel("Nick Name");
+		JLabel nickLabel = new JLabel("Nick Name");
 		nickField = new JTextField("", 15);
 		nickPanel.add(nickLabel);
 		nickPanel.add(nickField);
 
 		JPanel fullPanel = new JPanel();
 		fullPanel.setLayout(new FlowLayout());
-		fullLabel = new JLabel("Full Name");
+		JLabel fullLabel = new JLabel("Full Name");
 		fullField = new JTextField("", 15);
 		fullPanel.add(fullLabel);
 		fullPanel.add(fullField);
 
 		JPanel emailPanel = new JPanel();
 		emailPanel.setLayout(new FlowLayout());
-		emailLabel = new JLabel("E-Mail");
+		JLabel emailLabel = new JLabel("E-Mail");
 		emailField = new JTextField("", 15);
 		emailPanel.add(emailLabel);
 		emailPanel.add(emailField);
@@ -88,7 +81,7 @@ public class NewPatronView {
 
 		Insets buttonMargin = new Insets(4, 4, 4, 4);
 
-		finished = new JButton("Add Patron");
+		JButton finished = new JButton("Add Patron");
 		JPanel finishedPanel = new JPanel();
 		finishedPanel.setLayout(new FlowLayout());
 		finished.addActionListener(new ActionListener() {
@@ -97,21 +90,19 @@ public class NewPatronView {
 				nick = nickField.getText();
 				full = fullField.getText();
 				email = emailField.getText();
-				done = true;
 				addParty.updateNewPatron( nick, full, email);
 				win.hide();
 			}
 		});
 		finishedPanel.add(finished);
 
-		abort = new JButton("Abort");
+		JButton abort = new JButton("Abort");
 		JPanel abortPanel = new JPanel();
 		abortPanel.setLayout(new FlowLayout());
 		abort.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
-				done = true;
-				win.hide();
+				win.setVisible(false);
 			}
 		});
 		abortPanel.add(abort);

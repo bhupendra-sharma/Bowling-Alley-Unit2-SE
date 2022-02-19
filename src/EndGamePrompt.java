@@ -15,10 +15,9 @@ import javax.swing.event.*;
 import java.util.*;
 import java.text.*;
 
-public class EndGamePrompt implements ActionListener {
+public class EndGamePrompt  {
 
-	private JFrame win;
-	private JButton yesButton, noButton;
+	private final JFrame win;
 
 	private int result;
 
@@ -48,16 +47,26 @@ public class EndGamePrompt implements ActionListener {
 
 		Insets buttonMargin = new Insets(4, 4, 4, 4);
 
-		yesButton = new JButton("Yes");
+		JButton yesButton = new JButton("Yes");
 		JPanel yesButtonPanel = new JPanel();
 		yesButtonPanel.setLayout(new FlowLayout());
-		yesButton.addActionListener(this);
+		yesButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				result=1;
+			}
+		});
 		yesButtonPanel.add(yesButton);
 
-		noButton = new JButton("No");
+		JButton noButton = new JButton("No");
 		JPanel noButtonPanel = new JPanel();
 		noButtonPanel.setLayout(new FlowLayout());
-		noButton.addActionListener(this);
+		noButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				result=2;
+			}
+		});
 		noButtonPanel.add(noButton);
 
 		buttonPanel.add(yesButton);
@@ -77,16 +86,6 @@ public class EndGamePrompt implements ActionListener {
 			((screenSize.width) / 2) - ((win.getSize().width) / 2),
 			((screenSize.height) / 2) - ((win.getSize().height) / 2));
 		win.show();
-
-	}
-
-	public void actionPerformed(ActionEvent e) {
-		if (e.getSource().equals(yesButton)) {		
-			result=1;
-		}
-		if (e.getSource().equals(noButton)) {		
-			result=2;
-		}
 
 	}
 

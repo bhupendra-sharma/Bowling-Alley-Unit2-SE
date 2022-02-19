@@ -23,14 +23,13 @@ import java.util.*;
 
 public class ControlDeskView implements  EventObserver{
 
-	private JButton addParty, finished, assign;
-	private JFrame win;
-	private JList partyList;
-	private ControlDeskView cdv=this;
+	private final JFrame win;
+	private final JList partyList;
+	private final ControlDeskView cdv=this;
 	/** The maximum  number of members in a party */
 	private int maxMembers;
 	
-	private ControlDesk controlDesk;
+	private final ControlDesk controlDesk;
 
 	/**
 	 * Displays a GUI representation of the ControlDesk
@@ -55,7 +54,7 @@ public class ControlDeskView implements  EventObserver{
 		controlsPanel.setLayout(new GridLayout(3, 1));
 		controlsPanel.setBorder(new TitledBorder("Controls"));
 
-		addParty = new JButton("Add Party");
+		JButton addParty = new JButton("Add Party");
 		JPanel addPartyPanel = new JPanel();
 		addPartyPanel.setLayout(new FlowLayout());
 		addParty.addActionListener(new ActionListener() {
@@ -67,7 +66,7 @@ public class ControlDeskView implements  EventObserver{
 		addPartyPanel.add(addParty);
 		controlsPanel.add(addPartyPanel);
 
-		assign = new JButton("Assign Lanes");
+		JButton assign = new JButton("Assign Lanes");
 		JPanel assignPanel = new JPanel();
 		assignPanel.setLayout(new FlowLayout());
 		assign.addActionListener(new ActionListener() {
@@ -79,7 +78,7 @@ public class ControlDeskView implements  EventObserver{
 		assignPanel.add(assign);
 //		controlsPanel.add(assignPanel);
 
-		finished = new JButton("Finished");
+		JButton finished = new JButton("Finished");
 		JPanel finishedPanel = new JPanel();
 		finishedPanel.setLayout(new FlowLayout());
 		finished.addActionListener(new ActionListener() {

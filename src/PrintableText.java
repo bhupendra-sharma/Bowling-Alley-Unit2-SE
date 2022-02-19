@@ -32,7 +32,7 @@ public class PrintableText implements Printable {
 		Font font = new Font ("courier", Font.PLAIN, 12);
    		FontRenderContext frc = g2d.getFontRenderContext();
 
-		String lines[] = text.split("\n");
+		String[] lines = text.split("\n");
 
 		for (int i=0; i < lines.length; i++) {		
 			if (lines[i].length() > 0) {

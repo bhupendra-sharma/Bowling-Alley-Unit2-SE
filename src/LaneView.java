@@ -9,38 +9,28 @@ import javax.swing.*;
 import java.util.*;
 
 public class LaneView implements EventObserver {
-
-	private int roll;
 	private boolean initDone = true;
 
-	JFrame frame;
-	Container cpanel;
-	Vector bowlers;
-	int cur;
-	Iterator bowlIt;
+	private final JFrame frame;
+	private final Container cpanel;
+	private Vector bowlers;
 
-	JPanel[][] balls;
-	JLabel[][] ballLabel;
-	JPanel[][] scores;
-	JLabel[][] scoreLabel;
-	JPanel[][] ballGrid;
-	JPanel[] pins;
+	private JLabel[][] ballLabel;
+	private JLabel[][] scoreLabel;
 
-	JButton maintenance;
-	Lane lane;
+	private final Lane lane;
 
 	public LaneView(Lane lane, int laneNum) {
 
 		this.lane = lane;
 
-		initDone = true;
 		frame = new JFrame("Lane " + laneNum + ":");
 		cpanel = frame.getContentPane();
 		cpanel.setLayout(new BorderLayout());
 
 		frame.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
-				frame.hide();
+				frame.setVisible(false);
 			}
 		});
 
@@ -49,29 +39,29 @@ public class LaneView implements EventObserver {
 	}
 
 	public void show() {
-		frame.show();
+		frame.setVisible(true);
 	}
 
 	public void hide() {
-		frame.hide();
+		frame.setVisible(false);
 	}
 
-	private JPanel makeFrame(Party party) {
+	private JPanel makeFrame(Vector<Bowler> party) {
 
 		initDone = false;
-		bowlers = party.getMembers();
+		bowlers = party;
 		int numBowlers = bowlers.size();
 
 		JPanel panel = new JPanel();
 
 		panel.setLayout(new GridLayout(0, 1));
 
-		balls = new JPanel[numBowlers][23];
+		JPanel[][] balls = new JPanel[numBowlers][23];
 		ballLabel = new JLabel[numBowlers][23];
-		scores = new JPanel[numBowlers][10];
+		JPanel[][] scores = new JPanel[numBowlers][10];
 		scoreLabel = new JLabel[numBowlers][10];
-		ballGrid = new JPanel[numBowlers][10];
-		pins = new JPanel[numBowlers];
+		JPanel[][] ballGrid = new JPanel[numBowlers][10];
+		JPanel[] pins = new JPanel[numBowlers];
 
 		for (int i = 0; i != numBowlers; i++) {
 			for (int j = 0; j != 23; j++) {
@@ -125,7 +115,7 @@ public class LaneView implements EventObserver {
 	public void receiveEvent(Object eventObject) {
 	if(eventObject instanceof Lane) {
 		if (lane.isPartyAssigned()) {
-			int numBowlers = ((Lane)eventObject).getParty().getMembers().size();
+			int numBowlers = ((Lane)eventObject).getParty().size();
 			while (!initDone) {
 				//System.out.println("chillin' here.");
 				try {
@@ -147,7 +137,7 @@ public class LaneView implements EventObserver {
 
 				Insets buttonMargin = new Insets(4, 4, 4, 4);
 
-				maintenance = new JButton("Maintenance Call");
+				JButton maintenance = new JButton("Maintenance Call");
 				JPanel maintenancePanel = new JPanel();
 				maintenancePanel.setLayout(new FlowLayout());
 				maintenance.addActionListener(new ActionListener() {
@@ -174,30 +164,30 @@ public class LaneView implements EventObserver {
 								(Integer.toString(lescores[k][i])));
 				}
 				for (int i = 0; i < 21; i++) {
-					if (((int[]) ((HashMap) ((Lane)eventObject).getScore())
+					if (((int[]) (((Lane)eventObject).getScore())
 							.get(bowlers.get(k)))[i]
 							!= -1)
-						if (((int[]) ((HashMap) ((Lane)eventObject).getScore())
+						if (((int[]) (((Lane)eventObject).getScore())
 								.get(bowlers.get(k)))[i]
 								== 10
 								&& (i % 2 == 0 || i == 19))
 							ballLabel[k][i].setText("X");
 						else if (
 								i > 0
-										&& ((int[]) ((HashMap) ((Lane)eventObject).getScore())
+										&& ((int[]) (((Lane)eventObject).getScore())
 										.get(bowlers.get(k)))[i]
-										+ ((int[]) ((HashMap) ((Lane)eventObject).getScore())
+										+ ((int[]) (((Lane)eventObject).getScore())
 										.get(bowlers.get(k)))[i
 										- 1]
 										== 10
 										&& i % 2 == 1)
 							ballLabel[k][i].setText("/");
-						else if (((int[]) ((HashMap) ((Lane)eventObject).getScore()).get(bowlers.get(k)))[i] == -2) {
+						else if (((int[]) (((Lane)eventObject).getScore()).get(bowlers.get(k)))[i] == -2) {
 
 							ballLabel[k][i].setText("F");
 						} else
 							ballLabel[k][i].setText(
-									(Integer.toString(((int[]) ((HashMap) ((Lane)eventObject).getScore())
+									(Integer.toString(((int[]) (((Lane)eventObject).getScore())
 											.get(bowlers.get(k)))[i])));
 				}
 			}
