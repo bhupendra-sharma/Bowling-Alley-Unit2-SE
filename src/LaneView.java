@@ -135,8 +135,6 @@ public class LaneView implements EventObserver {
 				JPanel buttonPanel = new JPanel();
 				buttonPanel.setLayout(new FlowLayout());
 
-				Insets buttonMargin = new Insets(4, 4, 4, 4);
-
 				JButton maintenance = new JButton("Maintenance Call");
 				JPanel maintenancePanel = new JPanel();
 				maintenancePanel.setLayout(new FlowLayout());
