@@ -25,7 +25,7 @@ import java.io.*;
 class FileUtils {
 
 	/** The location of the bowelr database */
-	private static String BOWLER_DAT = "BOWLERS.DAT";
+	private static final String BOWLER_DAT = "BOWLERS.DAT";
 
     /**
      * Retrieves bowler information from the database and returns a Bowler objects with populated fields.
@@ -35,7 +35,7 @@ class FileUtils {
      * @return a Bowler object
      * 
      */
-	private static String SCOREHISTORY_DAT = "SCOREHISTORY.DAT";
+	private static final String SCOREHISTORY_DAT = "SCOREHISTORY.DAT";
 
 	public static Vector getScores(String nick)
 			throws IOException, FileNotFoundException {

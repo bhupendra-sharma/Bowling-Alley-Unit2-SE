@@ -75,10 +75,10 @@ import java.lang.Boolean;
 
 public class Pinsetter {
 
-	private Random rnd;
-	private Vector subscribers;
+	private final Random rnd;
+	private final Vector subscribers;
 
-	private boolean[] pins; 
+	private final boolean[] pins;
 			/* 0-9 of state of pine, true for standing, 
 			false for knocked down
 
@@ -100,8 +100,8 @@ public class Pinsetter {
 	 * @post all subscribers have recieved pinsetter event with updated state
 	 * */
 	private void sendEvent() {	// send events when our state is changed
-		for (int i=0; i < subscribers.size(); i++) {
-			((EventObserver)subscribers.get(i)).receiveEvent(this);
+		for (Object subscriber : subscribers) {
+			((EventObserver) subscriber).receiveEvent(this);
 		}
 	}
 

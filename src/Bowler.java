@@ -24,9 +24,9 @@
 
 public class Bowler {
 
-    private String fullName;
-    private String nickName;
-    private String email;
+    private final String fullName;
+    private final String nickName;
+    private final String email;
 
     public Bowler( String nick, String full, String mail ) {
 	nickName = nick;

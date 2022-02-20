@@ -41,14 +41,15 @@ import java.text.*;
 
 public class AddPartyView implements  ListSelectionListener {
 
-	private int maxSize;
-	private AddPartyView apv=this;
-	private JFrame win;
-	private JButton addPatron, newPatron, remPatron, finished;
-	private JList partyList, allBowlers;
-	private Vector party, bowlerdb;
+	private final int maxSize;
+	private final AddPartyView apv=this;
+	private final JFrame win;
+	private final JList partyList;
+	private final JList allBowlers;
+	private final Vector party;
+	private Vector bowlerdb;
 
-	private ControlDeskView controlDeskView;
+	private final ControlDeskView controlDeskView;
 
 	private String selectedNick, selectedMember;
 
@@ -105,9 +106,7 @@ public class AddPartyView implements  ListSelectionListener {
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new GridLayout(4, 1));
 
-		Insets buttonMargin = new Insets(4, 4, 4, 4);
-
-		addPatron = new JButton("Add to Party");
+		JButton addPatron = new JButton("Add to Party");
 		JPanel addPatronPanel = new JPanel();
 		addPatronPanel.setLayout(new FlowLayout());
 		addPatron.addActionListener(new ActionListener() {
@@ -125,7 +124,7 @@ public class AddPartyView implements  ListSelectionListener {
 		});
 		addPatronPanel.add(addPatron);
 
-		remPatron = new JButton("Remove Member");
+		JButton remPatron = new JButton("Remove Member");
 		JPanel remPatronPanel = new JPanel();
 		remPatronPanel.setLayout(new FlowLayout());
 		remPatron.addActionListener(new ActionListener() {
@@ -139,7 +138,7 @@ public class AddPartyView implements  ListSelectionListener {
 		});
 		remPatronPanel.add(remPatron);
 
-		newPatron = new JButton("New Patron");
+		JButton newPatron = new JButton("New Patron");
 		JPanel newPatronPanel = new JPanel();
 		newPatronPanel.setLayout(new FlowLayout());
 		newPatron.addActionListener(new ActionListener() {
@@ -150,14 +149,14 @@ public class AddPartyView implements  ListSelectionListener {
 		});
 		newPatronPanel.add(newPatron);
 
-		finished = new JButton("Finished");
+		JButton finished = new JButton("Finished");
 		JPanel finishedPanel = new JPanel();
 		finishedPanel.setLayout(new FlowLayout());
 		finished.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				if ( party != null && party.size() > 0) {
-					controlDeskView.updateAddParty( apv.getParty());
+					controlDeskView.updateAddParty( party );
 				}
 				win.hide();
 			}
@@ -228,14 +227,6 @@ public class AddPartyView implements  ListSelectionListener {
 		} catch (Exception e2) {
 			System.err.println("File I/O Error");
 		}
-	}
-
-/**
- * Accessor for Party
- */
-
-	public Vector getParty() {
-		return party;
 	}
 
 }

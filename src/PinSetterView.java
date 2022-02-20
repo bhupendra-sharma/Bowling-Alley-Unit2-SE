@@ -23,8 +23,7 @@ public class PinSetterView implements EventObserver {
 
 
     private Vector pinVect = new Vector ( );
-    private JPanel firstRoll;
-    private JPanel secondRoll;
+	private final JPanel secondRoll;
 
     /**
      * Constructs a Pin Setter GUI displaying which roll it is with
@@ -39,7 +38,7 @@ public class PinSetterView implements EventObserver {
      */
     
 
-	private JFrame frame;
+	private final JFrame frame;
     
     public PinSetterView ( int laneNum ) {
 	
@@ -54,14 +53,14 @@ public class PinSetterView implements EventObserver {
 	//********************Top of GUI indicates first or second roll
 	
 	JPanel top = new JPanel ( );
-	
-	firstRoll = new JPanel ( );
+
+		JPanel firstRoll = new JPanel();
 	firstRoll.setBackground( Color.yellow );
 	
 	secondRoll = new JPanel ( );
 	secondRoll.setBackground ( Color.black );
 	
-	top.add ( firstRoll, BorderLayout.WEST );
+	top.add (firstRoll, BorderLayout.WEST );
 	
 	top.add ( secondRoll, BorderLayout.EAST );
 	
@@ -204,7 +203,7 @@ public class PinSetterView implements EventObserver {
     	frame.hide();
     }
     
-    public static void main ( String args [ ] ) {
+    public static void main (String[] args) {
 		PinSetterView pg = new PinSetterView ( 1 );
     }
     

@@ -14,14 +14,17 @@ import javax.swing.event.*;
 
 public class LaneStatusView implements EventObserver {
 
-	private JPanel jp;
+	private final JPanel jp;
 
-	private JLabel curBowler, foul, pinsDown;
-	private JButton viewLane, viewPinSetter, maintenance;
+	private final JLabel curBowler;
+	private final JLabel pinsDown;
+	private final JButton viewLane;
+	private final JButton viewPinSetter;
+	private final JButton maintenance;
 
-	private PinSetterView psv;
-	private LaneView lv;
-	private Lane lane;
+	private final PinSetterView psv;
+	private final LaneView lv;
+	private final Lane lane;
 	int laneNum;
 
 	boolean laneShowing;
@@ -47,8 +50,6 @@ public class LaneStatusView implements EventObserver {
 		jp.setLayout(new FlowLayout());
 		JLabel cLabel = new JLabel( "Now Bowling: " );
 		curBowler = new JLabel( "(no one)" );
-		JLabel fLabel = new JLabel( "Foul: " );
-		foul = new JLabel( " " );
 		JLabel pdLabel = new JLabel( "Pins Down: " );
 		pinsDown = new JLabel( "0" );
 
@@ -65,10 +66,10 @@ public class LaneStatusView implements EventObserver {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				if ( lane.isPartyAssigned() ) {
-					if ( laneShowing == false ) {
+					if (!laneShowing) {
 						lv.show();
 						laneShowing=true;
-					} else if ( laneShowing == true ) {
+					} else {
 						lv.hide();
 						laneShowing=false;
 					}
@@ -85,10 +86,10 @@ public class LaneStatusView implements EventObserver {
 			public void actionPerformed(ActionEvent actionEvent) {
 				if ( lane.isPartyAssigned() ) {
 
-						if ( psShowing == false ) {
+						if (!psShowing) {
 							psv.show();
 							psShowing=true;
-						} else if ( psShowing == true ) {
+						} else {
 							psv.hide();
 							psShowing=false;
 						}
@@ -123,8 +124,6 @@ public class LaneStatusView implements EventObserver {
 
 		jp.add( cLabel );
 		jp.add( curBowler );
-//		jp.add( fLabel );
-//		jp.add( foul );
 		jp.add( pdLabel );
 		jp.add( pinsDown );
 		
@@ -142,7 +141,7 @@ public class LaneStatusView implements EventObserver {
 			pinsDown.setText(Integer.toString(((Pinsetter) eventObject).totalPinsDown()));
 		}
 		else if(eventObject instanceof Lane){
-			curBowler.setText( ( ((Lane)eventObject).getBowler()).getNick() );
+			curBowler.setText( ( ((Lane)eventObject).getBowlerNickName()) );
 			if ( ((Lane)eventObject).isMechanicalProblem() ) {
 				maintenance.setBackground( Color.RED );
 			}
