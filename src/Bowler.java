@@ -46,4 +46,9 @@ public class Bowler {
 		return email;	
 	}
 
+	@Override
+	public String toString(){
+		return fullName + "\t" + nickName + "\t" + email + "\n";
+	}
+
 }

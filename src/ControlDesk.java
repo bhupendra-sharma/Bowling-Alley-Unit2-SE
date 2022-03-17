@@ -210,12 +210,8 @@ class ControlDesk extends Thread {
 
 	private Bowler registerPatron(String nickName) {
 		Bowler patron = null;
-		try {
-			// only one patron / nick.... no dupes, no checks
-			patron = FileUtils.getBowlerInfo(nickName);
-		} catch (IOException e) {
-			System.err.println("Error..." + e);
-		}
+		Dao<Bowler> bowlerDao = new BowlerDao();
+		patron = bowlerDao.getByParam(nickName);
 		return patron;
 	}
 

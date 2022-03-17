@@ -219,8 +219,10 @@ public class Lane extends Thread implements EventObserver {
 						finalScores[bowlIndex][gameNumber] = cumulScores[bowlIndex][9];
 						try{
 						Date date = new Date();
+						Dao<Score> scoreDao = new ScoreDao();
 						String dateString = "" + date.getHours() + ":" + date.getMinutes() + " " + date.getMonth() + "/" + date.getDay() + "/" + (date.getYear() + 1900);
-							FileUtils.addScore(currentThrower.getNick(), dateString, Integer.toString(cumulScores[bowlIndex][9]));
+							scoreDao.save(new Score(currentThrower.getNick(), dateString
+									, Integer.toString(cumulScores[bowlIndex][9])));
 						} catch (Exception e) {System.err.println("Exception in addScore. "+ e );} 
 					}
 

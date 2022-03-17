@@ -19,12 +19,18 @@ public class ScoreReport {
 	public ScoreReport( Bowler bowler, int[] scores, int games ) {
 		String nick = bowler.getNick();
 		String full = bowler.getFullName();
-		Vector v = null;
+		Vector<Score> v = new Vector<>();
+		Dao<Score> scoreDao = new ScoreDao();
 		try{
-			v = FileUtils.getScores(nick);
+			Vector<Score> scoreRecords = scoreDao.getAll();
+			for(Score score : scoreRecords){
+				if(nick.equals(score.getNick())){
+					v.add(score);
+				}
+			}
 		} catch (Exception e){System.err.println("Error: " + e);}
 		
-		Iterator scoreIt = v.iterator();
+		Iterator<Score> scoreIt = v.iterator();
 
 		content = "--Lucky Strike Bowling Alley Score Report--\n\n" + "Report for " + full + ", aka \"" + nick + "\":\n\nFinal scores for this session: " + scores[0];
 		for (int i = 1; i < games; i++){

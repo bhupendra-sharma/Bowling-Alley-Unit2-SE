@@ -32,7 +32,6 @@ import javax.swing.border.*;
 import javax.swing.event.*;
 
 import java.util.*;
-import java.text.*;
 
 /**
  * Constructor for GUI used to Add Parties to the waiting party queue.
@@ -47,11 +46,13 @@ public class AddPartyView implements  ListSelectionListener {
 	private final JList partyList;
 	private final JList allBowlers;
 	private final Vector party;
-	private Vector bowlerdb;
+	private Vector bowlerdb =  new Vector<>();
+
 
 	private final ControlDeskView controlDeskView;
 
 	private String selectedNick, selectedMember;
+
 
 	public AddPartyView(ControlDeskView controlDesk, int max) {
 
@@ -88,7 +89,8 @@ public class AddPartyView implements  ListSelectionListener {
 		bowlerPanel.setBorder(new TitledBorder("Bowler Database"));
 
 		try {
-			bowlerdb = new Vector(FileUtils.getBowlers());
+			Dao<Bowler> bowlerDao = new BowlerDao();
+			bowlerDao.getAll().forEach(bowler -> bowlerdb.add(bowler.getNick()));
 		} catch (Exception e) {
 			System.err.println("File Error");
 			bowlerdb = new Vector();
@@ -141,11 +143,8 @@ public class AddPartyView implements  ListSelectionListener {
 		JButton newPatron = new JButton("New Patron");
 		JPanel newPatronPanel = new JPanel();
 		newPatronPanel.setLayout(new FlowLayout());
-		newPatron.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent actionEvent) {
-				NewPatronView newPatron = new NewPatronView( apv );
-			}
+		newPatron.addActionListener(actionEvent -> {
+			new NewPatronView( apv );
 		});
 		newPatronPanel.add(newPatron);
 
@@ -155,7 +154,7 @@ public class AddPartyView implements  ListSelectionListener {
 		finished.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
-				if ( party != null && party.size() > 0) {
+				if ( party.size() > 0) {
 					controlDeskView.updateAddParty( party );
 				}
 				win.hide();
@@ -211,13 +210,11 @@ public class AddPartyView implements  ListSelectionListener {
 
 	public void updateNewPatron(String nickName, String fullName, String emailId) {
 		try {
-			Bowler checkBowler = FileUtils.getBowlerInfo( nickName );
+			Dao<Bowler> bowlerDao = new BowlerDao();
+			Bowler checkBowler = bowlerDao.getByParam(nickName);
 			if ( checkBowler == null ) {
-				FileUtils.putBowlerInfo(
-					nickName,
-					fullName,
-					emailId);
-				bowlerdb = new Vector(FileUtils.getBowlers());
+				bowlerDao.save(new Bowler(nickName, fullName, emailId));
+				bowlerdb = bowlerDao.getAll();
 				allBowlers.setListData(bowlerdb);
 				party.add(nickName);
 				partyList.setListData(party);

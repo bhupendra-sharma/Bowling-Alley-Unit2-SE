@@ -84,15 +84,12 @@ public class NewPatronView {
 		JButton finished = new JButton("Add Patron");
 		JPanel finishedPanel = new JPanel();
 		finishedPanel.setLayout(new FlowLayout());
-		finished.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent actionEvent) {
-				nick = nickField.getText();
-				full = fullField.getText();
-				email = emailField.getText();
-				addParty.updateNewPatron( nick, full, email);
-				win.hide();
-			}
+		finished.addActionListener(actionEvent -> {
+			nick = nickField.getText();
+			full = fullField.getText();
+			email = emailField.getText();
+			addParty.updateNewPatron( nick, full, email);
+			win.hide();
 		});
 		finishedPanel.add(finished);
 

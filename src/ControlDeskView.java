@@ -26,9 +26,7 @@ public class ControlDeskView implements  EventObserver{
 	private final JFrame win;
 	private final JList partyList;
 	private final ControlDeskView cdv=this;
-	/** The maximum  number of members in a party */
-	private int maxMembers;
-	
+
 	private final ControlDesk controlDesk;
 
 	/**
@@ -39,7 +37,7 @@ public class ControlDeskView implements  EventObserver{
 	public ControlDeskView(ControlDesk controlDesk, int maxMembers) {
 
 		this.controlDesk = controlDesk;
-		this.maxMembers = maxMembers;
+		/** The maximum  number of members in a party */
 		int numLanes = controlDesk.getNumLanes();
 
 		win = new JFrame("Control Desk");
@@ -57,36 +55,18 @@ public class ControlDeskView implements  EventObserver{
 		JButton addParty = new JButton("Add Party");
 		JPanel addPartyPanel = new JPanel();
 		addPartyPanel.setLayout(new FlowLayout());
-		addParty.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent actionEvent) {
-				AddPartyView addPartyWin = new AddPartyView(cdv, maxMembers);
-			}
+		addParty.addActionListener(actionEvent -> {
+			new AddPartyView(cdv, maxMembers);
 		});
 		addPartyPanel.add(addParty);
 		controlsPanel.add(addPartyPanel);
 
-		JButton assign = new JButton("Assign Lanes");
-		JPanel assignPanel = new JPanel();
-		assignPanel.setLayout(new FlowLayout());
-		assign.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent actionEvent) {
-				controlDesk.assignLane();
-			}
-		});
-		assignPanel.add(assign);
-//		controlsPanel.add(assignPanel);
-
 		JButton finished = new JButton("Finished");
 		JPanel finishedPanel = new JPanel();
 		finishedPanel.setLayout(new FlowLayout());
-		finished.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent actionEvent) {
-				win.hide();
-				System.exit(0);
-			}
+		finished.addActionListener(actionEvent -> {
+			win.hide();
+			System.exit(0);
 		});
 		finishedPanel.add(finished);
 		controlsPanel.add(finishedPanel);
@@ -103,7 +83,7 @@ public class ControlDeskView implements  EventObserver{
 			Lane curLane = (Lane) it.next();
 			LaneStatusView laneStat = new LaneStatusView(curLane,(laneCount+1));
 			curLane.subscribe(laneStat);
-			((Pinsetter)curLane.getPinsetter()).subscribe(laneStat);
+			(curLane.getPinsetter()).subscribe(laneStat);
 			JPanel lanePanel = laneStat.showLane();
 			lanePanel.setBorder(new TitledBorder("Lane" + ++laneCount ));
 			laneStatusPanel.add(lanePanel);

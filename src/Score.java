@@ -26,8 +26,12 @@ public class Score {
 		return score;
 	}
 
+	public String getNick(){
+		return nick;
+	}
+
 	public String toString() {
-		return nick + "\t" + date + "\t" + score;
+		return nick + "\t" + date + "\t" + score + "\n";
 	}
 
 }
