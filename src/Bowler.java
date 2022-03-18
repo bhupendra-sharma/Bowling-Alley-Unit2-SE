@@ -29,9 +29,9 @@ public class Bowler {
     private final String email;
 
     public Bowler( String nick, String full, String mail ) {
-	nickName = nick;
-	fullName = full;
-  	email = mail;
+		nickName = nick;
+		fullName = full;
+  		email = mail;
     }
 
 	public String getFullName ( ) {
@@ -48,7 +48,7 @@ public class Bowler {
 
 	@Override
 	public String toString(){
-		return fullName + "\t" + nickName + "\t" + email + "\n";
+		return nickName  + "\t" + fullName + "\t" + email + "\n";
 	}
 
 }

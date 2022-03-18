@@ -214,7 +214,7 @@ public class AddPartyView implements  ListSelectionListener {
 			Bowler checkBowler = bowlerDao.getByParam(nickName);
 			if ( checkBowler == null ) {
 				bowlerDao.save(new Bowler(nickName, fullName, emailId));
-				bowlerdb = bowlerDao.getAll();
+				bowlerdb.add(nickName);
 				allBowlers.setListData(bowlerdb);
 				party.add(nickName);
 				partyList.setListData(party);
