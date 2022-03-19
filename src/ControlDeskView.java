@@ -59,7 +59,19 @@ public class ControlDeskView implements  EventObserver{
 			new AddPartyView(cdv, maxMembers);
 		});
 		addPartyPanel.add(addParty);
+
 		controlsPanel.add(addPartyPanel);
+
+		JButton queryButton = new JButton("Query");
+		JPanel queryPanel = new JPanel();
+		queryPanel.setLayout(new FlowLayout());
+		queryButton.addActionListener(actionEvent -> {
+			new QueryView();
+		});
+		queryPanel.add(queryButton);
+
+
+		controlsPanel.add(queryPanel);
 
 		JButton finished = new JButton("Finished");
 		JPanel finishedPanel = new JPanel();

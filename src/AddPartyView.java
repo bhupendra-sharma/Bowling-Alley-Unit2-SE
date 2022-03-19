@@ -46,7 +46,7 @@ public class AddPartyView implements  ListSelectionListener {
 	private final JList partyList;
 	private final JList allBowlers;
 	private final Vector party;
-	private Vector bowlerdb =  new Vector<>();
+	private Vector bowlerdb =  new Vector();
 
 
 	private final ControlDeskView controlDeskView;
