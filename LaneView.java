@@ -20,6 +20,10 @@ public class LaneView implements EventObserver {
 
 	private final Lane lane;
 
+	private JButton PerformThrow;
+	public static boolean simulate_game = false;
+	public static boolean perform_throw = true;
+
 	private int scr;
 	public LaneView(Lane lane, int laneNum) {
 
@@ -72,7 +76,7 @@ public class LaneView implements EventObserver {
 					BorderFactory.createLineBorder(Color.BLACK));
 				balls[i][j].add(ballLabel[i][j]);
 			}
-			ballLabel[i][24] = new JLabel(" ");
+			ballLabel[i][24] = new JLabel(" ",JLabel.CENTER);
 			balls[i][24] = new JPanel();
 			balls[i][24].setBorder(BorderFactory.createLineBorder(Color.BLACK));
 			balls[i][24].add(ballLabel[i][24]);
@@ -162,7 +166,33 @@ public class LaneView implements EventObserver {
 				});
 				maintenancePanel.add(maintenance);
 
+				JButton simulate = new JButton("Simulate");
+				JPanel simulatePanel = new JPanel();
+				simulatePanel.setLayout(new FlowLayout());
+				simulate.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent actionEvent) {
+						simulate_game = true;
+						System.out.println("Simulate Pressed");
+					}
+				});
+				simulatePanel.add(simulate);
+
+				PerformThrow = new JButton("Perform Throw");
+				JPanel PerformThrowPanel = new JPanel();
+				PerformThrowPanel.setLayout(new FlowLayout());
+				PerformThrow.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent actionEvent) {
+						perform_throw = true;
+						System.out.println("Perform Throw Pressed");
+					}
+				});
+				PerformThrowPanel.add(PerformThrow);
+
 				buttonPanel.add(maintenancePanel);
+				buttonPanel.add(PerformThrowPanel);
+				buttonPanel.add(simulatePanel);
 
 				cpanel.add(buttonPanel, "South");
 
@@ -182,14 +212,29 @@ public class LaneView implements EventObserver {
 						scr=lescores[k][i];
 					else
 						scr=lescores[k][i]-lescores[k][i-1];
+//					ImageIcon iconLogo = new ImageIcon("img/10.png");
+//					ImageIcon iconLogo = new ImageIcon(new ImageIcon("img/10.png").getImage().getScaledInstance(50, 45, Image.SCALE_DEFAULT));
+					ImageIcon iconLogo;
 					if(scr==10)
-					ballLabel[k][24].setText("\uD83D\uDE01");
-					else if(scr<=9 && scr>=6)
-						ballLabel[k][24].setText("\uD83D\uDE0A");
-					else if(scr<=5 && scr>=3)
-						ballLabel[k][24].setText("\uD83D\uDE11");
+						iconLogo = new ImageIcon(new ImageIcon("img/10.png").getImage().getScaledInstance(50, 45, Image.SCALE_DEFAULT));
+					if(scr==9)
+						iconLogo = new ImageIcon(new ImageIcon("img/9.png").getImage().getScaledInstance(50, 45, Image.SCALE_DEFAULT));
+					if(scr==8)
+						iconLogo = new ImageIcon(new ImageIcon("img/8.png").getImage().getScaledInstance(50, 45, Image.SCALE_DEFAULT));
+					if(scr==7)
+						iconLogo = new ImageIcon(new ImageIcon("img/7.png").getImage().getScaledInstance(50, 45, Image.SCALE_DEFAULT));
+					else if(scr<=6 && scr>=5)
+						iconLogo = new ImageIcon(new ImageIcon("img/6-5.png").getImage().getScaledInstance(50, 45, Image.SCALE_DEFAULT));
+					else if(scr<=4 && scr>=3)
+						iconLogo = new ImageIcon(new ImageIcon("img/4-3.png").getImage().getScaledInstance(50, 45, Image.SCALE_DEFAULT));
+					else if(scr<=2 && scr>=1)
+						iconLogo = new ImageIcon(new ImageIcon("img/2-1.png").getImage().getScaledInstance(50, 45, Image.SCALE_DEFAULT));
+					else if(scr==0)
+						iconLogo = new ImageIcon(new ImageIcon("img/0.png").getImage().getScaledInstance(50, 45, Image.SCALE_DEFAULT));
 					else
-						ballLabel[k][24].setText("\uD83D\uDE30");
+						iconLogo = new ImageIcon(new ImageIcon("img/grey.png").getImage().getScaledInstance(50, 45, Image.SCALE_DEFAULT));
+					if(scr>=0&&scr<=10)
+					ballLabel[k][24].setIcon(iconLogo);
 				}
 				for (int i = 0; i < 21; i++) {
 					if (((int[]) (((Lane)eventObject).getScore())
@@ -217,8 +262,6 @@ public class LaneView implements EventObserver {
 							ballLabel[k][i].setText(
 									(Integer.toString(((int[]) (((Lane)eventObject).getScore())
 											.get(bowlers.get(k)))[i])));
-						int scr = ((int[]) (((Lane)eventObject).getScore())
-								.get(bowlers.get(k)))[i];
 
 				}
 			}
