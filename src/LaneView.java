@@ -195,8 +195,7 @@ public class LaneView implements EventObserver {
 							scr=lescores[k][i];
 						else
 							scr=lescores[k][i]-lescores[k][i-1];
-//					ImageIcon iconLogo = new ImageIcon("img/10.png");
-//					ImageIcon iconLogo = new ImageIcon(new ImageIcon("img/10.png").getImage().getScaledInstance(50, 45, Image.SCALE_DEFAULT));
+
 						ImageIcon iconLogo;
 						if(scr==10)
 							iconLogo = new ImageIcon(new ImageIcon("img/10.png").getImage().getScaledInstance(50, 45, Image.SCALE_DEFAULT));
@@ -216,35 +215,23 @@ public class LaneView implements EventObserver {
 							iconLogo = new ImageIcon(new ImageIcon("img/0.png").getImage().getScaledInstance(50, 45, Image.SCALE_DEFAULT));
 						else
 							iconLogo = new ImageIcon(new ImageIcon("img/grey.png").getImage().getScaledInstance(50, 45, Image.SCALE_DEFAULT));
-						if(scr>=0&&scr<=10)
+						if(scr >= 0 && scr <= 10)
 							ballLabel[k][24].setIcon(iconLogo);
 					}
 					for (int i = 0; i < 21; i++) {
-						if (((int[]) (((Lane)eventObject).getScore())
-								.get(bowlers.get(k)))[i]
-								!= -1)
-							if (((int[]) (((Lane)eventObject).getScore())
-									.get(bowlers.get(k)))[i]
-									== 10
+						if (((int[]) (((Lane)eventObject).getScore()).get(bowlers.get(k)))[i] != -1)
+							if (((int[]) (((Lane)eventObject).getScore()).get(bowlers.get(k)))[i] == 10
 									&& (i % 2 == 0 || i == 19))
 								ballLabel[k][i].setText("X");
-							else if (
-									i > 0
-											&& ((int[]) (((Lane)eventObject).getScore())
-											.get(bowlers.get(k)))[i]
-											+ ((int[]) (((Lane)eventObject).getScore())
-											.get(bowlers.get(k)))[i
-											- 1]
-											== 10
-											&& i % 2 == 1)
+							else if (i > 0 && ((int[]) (((Lane)eventObject).getScore()).get(bowlers.get(k)))[i]
+									+ ((int[]) (((Lane)eventObject).getScore()).get(bowlers.get(k)))[i - 1] == 10
+									&& i % 2 == 1)
 								ballLabel[k][i].setText("/");
 							else if (((int[]) (((Lane)eventObject).getScore()).get(bowlers.get(k)))[i] == -2) {
-
 								ballLabel[k][i].setText("F");
 							} else
-								ballLabel[k][i].setText(
-										(Integer.toString(((int[]) (((Lane)eventObject).getScore())
-												.get(bowlers.get(k)))[i])));
+								ballLabel[k][i].setText((Integer.toString(
+										((int[]) (((Lane)eventObject).getScore()).get(bowlers.get(k)))[i])));
 
 					}
 				}
