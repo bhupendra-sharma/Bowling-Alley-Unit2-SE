@@ -43,6 +43,11 @@ public class LaneView implements EventObserver {
 		if(second_scorer!=-1)
 		System.out.println("second_scorer"+bowlers.get(second_scorer)+"Score:"+second);
 
+		lane.first=first;
+		lane.second=second;
+		lane.first_scorer=first_scorer;
+		lane.second_scorer=second_scorer;
+
 	}
 	public LaneView(Lane lane, int laneNum) {
 
@@ -61,7 +66,9 @@ public class LaneView implements EventObserver {
 		cpanel.add(new JPanel());
 
 	}
+	public void performThreeThrow(){
 
+	}
 	public void show() {
 		frame.setVisible(true);
 	}

@@ -1,15 +1,22 @@
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Vector;
 import java.util.Iterator;
 import java.util.HashMap;
 import java.util.Date;
+import javax.swing.*;
+import java.util.Random;
 
 public class Lane extends Thread implements EventObserver {
 	private Vector<Bowler> party;
 	private final Pinsetter setter;
 	private final HashMap scores;
-	private final Vector subscribers;
+	private final Vector<EventObserver> subscribers;
+
+	public int first_scorer = -1 , second_scorer = -1 ,first=-1,second=-1;
 
 	private boolean gameIsHalted;
+	private boolean completed=false;
 
 	private boolean partyAssigned;
 	private boolean gameFinished;
@@ -129,45 +136,96 @@ public class Lane extends Thread implements EventObserver {
 			} else if (partyAssigned && gameFinished) {
 
 				//Code for point 5
+				JFrame extendedPlayFrame = new JFrame();
+				JButton performOneThrow=new JButton("Perform One Throw");
+				JLabel info = new JLabel(party.get(first_scorer)+" has scored "+first+","+party.get(second_scorer)+" has scored "+second+"\n"+party.get(second_scorer)+" will perform a throw");
+				extendedPlayFrame.add(performOneThrow);
+				extendedPlayFrame.add(info);
+				extendedPlayFrame.setVisible(true);
+				performOneThrow.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						JFrame extendedPlayFrame1 = new JFrame();
+						extendedPlayFrame.setVisible(false);
+						Random r = new Random();
+						int low = 0;
+						int high = 20;
+						int result = r.nextInt(high-low) + low;
 
-
-				EndGamePrompt egp = new EndGamePrompt( (party.get(0)).getNick() + "'s Party" );
-				int result = egp.getResult();
-				egp.destroy();
-
-				System.out.println("result was: " + result);
-
-				// TODO: send record of scores to control desk
-				if (result == 1) {					// yes, want to play again
-					resetScores();
-					resetBowlerIterator();
-
-				} else if (result == 2) {// no, dont want to play another game
-					Vector printVector;
-					EndGameReport egr = new EndGameReport( (party.get(0)).getNick() + "'s Party", party);
-					printVector = egr.getResult();
-					partyAssigned = false;
-					Iterator scoreIt = party.iterator();
-					party = null;
-					partyAssigned = false;
-
-					publish(this);
-
-					int myIndex = 0;
-					while (scoreIt.hasNext()){
-						Bowler thisBowler = (Bowler)scoreIt.next();
-						ScoreReport sr = new ScoreReport( thisBowler, finalScores[myIndex++], gameNumber );
-						//sr.sendEmail(thisBowler.getEmail());
-						Iterator printIt = printVector.iterator();
-						while (printIt.hasNext()){
-							if (thisBowler.getNick() == (String)printIt.next()){
-								System.out.println("Printing " + thisBowler.getNick());
-								sr.sendPrintout();
-							}
+						if(result+second>first){
+							JButton performThreeThrow=new JButton("Continue 3 Frames");
+							JLabel info = new JLabel(party.get(second_scorer)+" has scored more points than "+party.get(first_scorer)+".New Scores:\n "+party.get(first_scorer)+":"+first+""+party.get(second_scorer)+":"+second);
+							extendedPlayFrame1.add(performThreeThrow);
+							extendedPlayFrame1.add(info);
+							performThreeThrow.addActionListener(new ActionListener() {
+								@Override
+								public void actionPerformed(ActionEvent e) {
+									for(EventObserver subscriber:subscribers){
+										if(subscriber instanceof LaneView){
+											((LaneView) subscriber).performThreeThrow();
+											break;
+										}
+									}
+								}
+							});
 						}
+						else
+						{
+							JButton finish=new JButton("Finish");
+							JLabel info = new JLabel(party.get(first_scorer)+" still has more score than "+party.get(second_scorer)+".New Scores:\n "+party.get(first_scorer)+":"+first+""+party.get(second_scorer)+":"+second);
+							extendedPlayFrame1.add(finish);
+							extendedPlayFrame1.add(info);
+							finish.addActionListener(new ActionListener() {
+								@Override
+								public void actionPerformed(ActionEvent e) {
+									completed=true;
+								}
+							});
+						}
+						extendedPlayFrame1.setVisible(true);
 
 					}
+				});
+				if(completed){EndGamePrompt egp = new EndGamePrompt( (party.get(0)).getNick() + "'s Party" );
+					int result = egp.getResult();
+					egp.destroy();
+
+					System.out.println("result was: " + result);
+
+					// TODO: send record of scores to control desk
+					if (result == 1) {					// yes, want to play again
+						resetScores();
+						resetBowlerIterator();
+
+					} else if (result == 2) {// no, dont want to play another game
+						Vector printVector;
+						EndGameReport egr = new EndGameReport( (party.get(0)).getNick() + "'s Party", party);
+						printVector = egr.getResult();
+						partyAssigned = false;
+						Iterator scoreIt = party.iterator();
+						party = null;
+						partyAssigned = false;
+
+						publish(this);
+
+						int myIndex = 0;
+						while (scoreIt.hasNext()){
+							Bowler thisBowler = (Bowler)scoreIt.next();
+							ScoreReport sr = new ScoreReport( thisBowler, finalScores[myIndex++], gameNumber );
+							//sr.sendEmail(thisBowler.getEmail());
+							Iterator printIt = printVector.iterator();
+							while (printIt.hasNext()){
+								if (thisBowler.getNick() == (String)printIt.next()){
+									System.out.println("Printing " + thisBowler.getNick());
+									sr.sendPrintout();
+								}
+							}
+
+						}
+					}
+
 				}
+
 			}
 
 
@@ -293,8 +351,8 @@ public class Lane extends Thread implements EventObserver {
 
 		curScore[ index - 1] = score;
 		scores.put(Cur, curScore);
-		CalculateScore scr=new CalculateScore(ball,scores,cumulScores,bowlIndex);
-		scr.getScore( Cur, frame );
+//		CalculateScore scr=new CalculateScore(ball,scores,cumulScores,bowlIndex);
+		getScore( Cur, frame );
 		publish( this );
 	}
 
@@ -396,5 +454,106 @@ public class Lane extends Thread implements EventObserver {
 		}
 	}
 
+	private int getStrikeBalls(int[] curScore,int i){
+		int strikeballs=0;
+		if (curScore[i+2] != -1) {
+			strikeballs = 1;
+			if(curScore[i+3] != -1) {
+				//Still got em.
+				strikeballs = 2;
+			} else if(curScore[i+4] != -1) {
+				//Ok, got it.
+				strikeballs = 2;
+			}
+		}
+		return strikeballs;
+	}
 
+	private void performNormalThrow(int[] curScore,int i)
+	{
+		if( i%2 == 0 && i < 18){
+			if ( i/2 == 0 ) {
+				//First frame, first ball.  Set his cumul score to the first ball
+				if(curScore[i] != -2){
+					cumulScores[bowlIndex][i/2] += curScore[i];
+				}
+			} else if (i/2 != 9){
+				//add his last frame's cumul to this ball, make it this frame's cumul.
+				if(curScore[i] != -2){
+					cumulScores[bowlIndex][i/2] += cumulScores[bowlIndex][i/2 - 1] + curScore[i];
+				} else {
+					cumulScores[bowlIndex][i/2] += cumulScores[bowlIndex][i/2 - 1];
+				}
+			}
+		} else if (i < 18){
+			if(curScore[i] != -1 && i > 2){
+				if(curScore[i] != -2){
+					cumulScores[bowlIndex][i/2] += curScore[i];
+				}
+			}
+		}
+		if (i/2 == 9){
+			if (i == 18){
+				cumulScores[bowlIndex][9] += cumulScores[bowlIndex][8];
+			}
+			if(curScore[i] != -2){
+				cumulScores[bowlIndex][9] += curScore[i];
+			}
+		} else if (i/2 == 10) {
+			if(curScore[i] != -2){
+				cumulScores[bowlIndex][9] += curScore[i];
+			}
+		}
+	}
+	public int getScore(Bowler Cur, int frame) {
+		int[] curScore;
+		int strikeballs = 0;
+		int totalScore = 0;
+		curScore = (int[]) scores.get(Cur);
+		for (int i = 0; i != 10; i++){
+			cumulScores[bowlIndex][i] = 0;
+		}
+		int current = 2*(frame - 1)+ball-1;
+		//Iterate through each ball until the current one.
+		for (int i = 0; i != current+2; i++){
+			//Spare:
+			if( i%2 == 1 && curScore[i - 1] + curScore[i] == 10 && i < current - 1 && i < 19){
+				//This ball was a the second of a spare.
+				//Also, we're not on the current ball.
+				//Add the next ball to the ith one in cumul.
+				cumulScores[bowlIndex][(i/2)] += curScore[i+1] + curScore[i];
+
+			} else if( i < current && i%2 == 0 && curScore[i] == 10  && i < 18){
+				strikeballs = getStrikeBalls(curScore,i);
+				//This ball is the first ball, and was a strike.
+				//If we can get 2 balls after it, good add them to cumul.
+
+				if (strikeballs == 2){
+					//Add up the strike.
+					//Add the next two balls to the current cumulscore.
+					cumulScores[bowlIndex][i/2] += 10;
+
+					if ( i/2 > 0 ){
+						cumulScores[bowlIndex][i/2] += curScore[i+2] + cumulScores[bowlIndex][(i/2)-1];
+					} else {
+						cumulScores[bowlIndex][i/2] += curScore[i+2];
+					}
+					if (curScore[i+3] != -1){
+						if( curScore[i+3] != -2){
+							cumulScores[bowlIndex][(i/2)] += curScore[i+3];
+						}
+					} else {
+						cumulScores[bowlIndex][(i/2)] += curScore[i+4];
+					}
+
+				} else {
+					break;
+				}
+			}else {
+				//We're dealing with a normal throw, add it and be on our way.
+				performNormalThrow(curScore,i);
+			}
+		}
+		return totalScore;
+	}
 }
