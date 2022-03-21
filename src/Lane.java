@@ -86,6 +86,7 @@ public class Lane extends Thread implements EventObserver {
 
 
 					while (canThrowAgain) {
+
 						try {
 							sleep(10);
 						} catch (Exception e) {}
@@ -126,6 +127,10 @@ public class Lane extends Thread implements EventObserver {
 					}
 				}
 			} else if (partyAssigned && gameFinished) {
+
+				//Code for point 5
+
+
 				EndGamePrompt egp = new EndGamePrompt( (party.get(0)).getNick() + "'s Party" );
 				int result = egp.getResult();
 				egp.destroy();
@@ -235,8 +240,8 @@ public class Lane extends Thread implements EventObserver {
 		Iterator bowlIt = party.iterator();
 
 		while ( bowlIt.hasNext() ) {
-			int[] toPut = new int[25];
-			for ( int i = 0; i != 25; i++){
+			int[] toPut = new int[30];
+			for ( int i = 0; i != 30; i++){
 				toPut[i] = -1;
 			}
 			scores.put( bowlIt.next(), toPut );
@@ -263,7 +268,7 @@ public class Lane extends Thread implements EventObserver {
 		partyAssigned = true;
 
 		int[] curScores = new int[party.size()];
-		cumulScores = new int[party.size()][10];
+		cumulScores = new int[party.size()][14];
 		finalScores = new int[party.size()][128]; //Hardcoding a max of 128 games, bite me.
 		gameNumber = 0;
 
