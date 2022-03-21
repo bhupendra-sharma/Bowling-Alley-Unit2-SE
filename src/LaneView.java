@@ -152,35 +152,24 @@ public class LaneView implements EventObserver {
 					JButton maintenance = new JButton("Maintenance Call");
 					JPanel maintenancePanel = new JPanel();
 					maintenancePanel.setLayout(new FlowLayout());
-					maintenance.addActionListener(new ActionListener() {
-						@Override
-						public void actionPerformed(ActionEvent actionEvent) {
-							lane.pauseGame();
-						}
-					});
+					maintenance.addActionListener(actionEvent -> lane.pauseGame());
 					maintenancePanel.add(maintenance);
 
 					JButton simulate = new JButton("Simulate");
 					JPanel simulatePanel = new JPanel();
 					simulatePanel.setLayout(new FlowLayout());
-					simulate.addActionListener(new ActionListener() {
-						@Override
-						public void actionPerformed(ActionEvent actionEvent) {
-							Lane.set_simulate_game(true);
-							System.out.println("Simulate Pressed:"+Lane.get_simulate_game());
-						}
+					simulate.addActionListener(actionEvent -> {
+						lane.set_simulate_game(true);
+						System.out.println("Simulate Pressed:" + lane.get_simulate_game());
 					});
 					simulatePanel.add(simulate);
 
 					PerformThrow = new JButton("Perform Throw");
 					JPanel PerformThrowPanel = new JPanel();
 					PerformThrowPanel.setLayout(new FlowLayout());
-					PerformThrow.addActionListener(new ActionListener() {
-						@Override
-						public void actionPerformed(ActionEvent actionEvent) {
-							Lane.set_perform_throw(true);
-							System.out.println("Perform Throw Pressed:"+Lane.get_perform_throw());
-						}
+					PerformThrow.addActionListener(actionEvent -> {
+						lane.set_perform_throw(true);
+						System.out.println("Perform Throw Pressed:"+lane.get_perform_throw());
 					});
 					PerformThrowPanel.add(PerformThrow);
 

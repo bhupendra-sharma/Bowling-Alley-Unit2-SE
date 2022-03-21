@@ -19,7 +19,6 @@ import java.util.List;
 public class QueryView implements  ListSelectionListener {
 
     private final JList<Object> partyList;
-    private final JList<Object> allBowlers;
     private Vector<String> party;
     private Vector<String> bowlerdb =  new Vector<>();
 
@@ -62,7 +61,7 @@ public class QueryView implements  ListSelectionListener {
             System.err.println("File Error");
             bowlerdb = new Vector<>();
         }
-        allBowlers = new JList<>(bowlerdb);
+        JList<Object> allBowlers = new JList<>(bowlerdb);
         allBowlers.setVisibleRowCount(8);
         allBowlers.setFixedCellWidth(120);
         JScrollPane bowlerPane = new JScrollPane(allBowlers);

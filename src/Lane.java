@@ -19,8 +19,8 @@ public class Lane extends Thread implements EventObserver {
 	private int frameNumber;
 	private boolean tenthFrameStrike;
 
-	private static boolean simulate_game = false;
-	private static boolean perform_throw = true;
+	private boolean simulate_game = false;
+	private boolean perform_throw = true;
 
 	private int[][] cumulScores;
 	private boolean canThrowAgain;
@@ -30,11 +30,11 @@ public class Lane extends Thread implements EventObserver {
 
 	private Bowler currentThrower;			// = the thrower who just took a throw
 
-	public static boolean get_simulate_game(){ 	return simulate_game;	}
-	public static void set_simulate_game(boolean val){		simulate_game=val;	}
+	public boolean get_simulate_game(){ 	return simulate_game;	}
+	public void set_simulate_game(boolean val){		simulate_game=val;	}
 
-	public static boolean get_perform_throw(){ 	return perform_throw;	}
-	public static void set_perform_throw(boolean val){		perform_throw=val;	}
+	public boolean get_perform_throw(){ 	return perform_throw;	}
+	public void set_perform_throw(boolean val){		perform_throw=val;	}
 
 	/** Lane()
 	 *
