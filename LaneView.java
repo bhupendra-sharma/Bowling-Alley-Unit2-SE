@@ -21,8 +21,7 @@ public class LaneView implements EventObserver {
 	private final Lane lane;
 
 	private JButton PerformThrow;
-	public static boolean simulate_game = false;
-	public static boolean perform_throw = true;
+
 
 	private int scr;
 	public LaneView(Lane lane, int laneNum) {
@@ -172,8 +171,8 @@ public class LaneView implements EventObserver {
 				simulate.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent actionEvent) {
-						simulate_game = true;
-						System.out.println("Simulate Pressed");
+						Lane.set_simulate_game(true);
+						System.out.println("Simulate Pressed:"+Lane.get_simulate_game());
 					}
 				});
 				simulatePanel.add(simulate);
@@ -184,8 +183,8 @@ public class LaneView implements EventObserver {
 				PerformThrow.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent actionEvent) {
-						perform_throw = true;
-						System.out.println("Perform Throw Pressed");
+						Lane.set_perform_throw(true);
+						System.out.println("Perform Throw Pressed:"+Lane.get_perform_throw());
 					}
 				});
 				PerformThrowPanel.add(PerformThrow);

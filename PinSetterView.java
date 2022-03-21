@@ -21,7 +21,8 @@ import java.util.Vector;
 
 public class PinSetterView implements EventObserver {
 
-
+	ImageIcon ballDown = new ImageIcon(new ImageIcon("img/ball_down.png").getImage().getScaledInstance(35, 45, Image.SCALE_DEFAULT));
+	ImageIcon ballStill = new ImageIcon(new ImageIcon("img/ball_still.png").getImage().getScaledInstance(20, 45, Image.SCALE_DEFAULT));
     private Vector pinVect = new Vector ( );
 	private final JPanel secondRoll;
 
@@ -99,7 +100,17 @@ public class PinSetterView implements EventObserver {
 	JPanel ten = new JPanel ();
 	JLabel tenL = new JLabel ( "10" );
 	ten.add (tenL);
-	
+
+		oneL.setIcon(ballStill);
+		twoL.setIcon(ballStill);
+		threeL.setIcon(ballStill);
+		fourL.setIcon(ballStill);
+		fiveL.setIcon(ballStill);
+		sixL.setIcon(ballStill);
+		sevenL.setIcon(ballStill);
+		eightL.setIcon(ballStill);
+		nineL.setIcon(ballStill);
+		tenL.setIcon(ballStill);
 	//This Vector will keep references to the pin labels to show
 	//which ones have fallen.
 	
@@ -179,7 +190,8 @@ public class PinSetterView implements EventObserver {
 					boolean pin = ((Pinsetter) eventObject).isPinKnockedDown(c);
 					tempPin = (JLabel)pinVect.get ( c );
 					if ( pin ) {
-						tempPin.setForeground ( Color.lightGray );
+//						tempPin.setForeground ( Color.lightGray );
+						tempPin.setIcon ( ballDown );
 					}
 				}
 			}
@@ -189,6 +201,7 @@ public class PinSetterView implements EventObserver {
 			if ( ((Pinsetter) eventObject).getPinsDownInThrow() == -1) {
 				for ( int i = 0; i != 10; i++){
 					((JLabel)pinVect.get(i)).setForeground(Color.black);
+					((JLabel)pinVect.get(i)).setIcon(ballStill);
 				}
 				secondRoll.setBackground( Color.black);
 			}
