@@ -1,52 +1,9 @@
-/* ControlDesk.java
- *
- *  Version:
- *  		$Id$
- * 
- *  Revisions:
- * 		$Log: ControlDesk.java,v $
- * 		Revision 1.13  2003/02/02 23:26:32  ???
- * 		ControlDesk now runs its own thread and polls for free lanes to assign queue members to
- * 		
- * 		Revision 1.12  2003/02/02 20:46:13  ???
- * 		Added " 's Party" to party names.
- * 		
- * 		Revision 1.11  2003/02/02 20:43:25  ???
- * 		misc cleanup
- * 		
- * 		Revision 1.10  2003/02/02 17:49:10  ???
- * 		Fixed problem in getPartyQueue that was returning the first element as every element.
- * 		
- * 		Revision 1.9  2003/02/02 17:39:48  ???
- * 		Added accessor for lanes.
- * 		
- * 		Revision 1.8  2003/02/02 16:53:59  ???
- * 		Updated comments to match javadoc format.
- * 		
- * 		Revision 1.7  2003/02/02 16:29:52  ???
- * 		Added ControlDeskEvent and ControlDeskObserver. Updated Queue to allow access to Vector so that contents could be viewed without destroying. Implemented observer model for most of ControlDesk.
- * 		
- * 		Revision 1.6  2003/02/02 06:09:39  ???
- * 		Updated many classes to support the ControlDeskView.
- * 		
- * 		Revision 1.5  2003/01/26 23:16:10  ???
- * 		Improved thread handeling in lane/controldesk
- * 		
- * 
- */
-
-/**
- * Class that represents control desk
- *
- */
-
 import java.util.*;
-import java.io.*;
 
 class ControlDesk extends Thread {
 
 	/** The collection of Lanes */
-	private final HashSet lanes;
+	private final HashSet<Lane> lanes;
 
 	/** The party wait queue */
 	private final Queue<Vector<Bowler>> partyQueue;
@@ -55,7 +12,7 @@ class ControlDesk extends Thread {
 	private final int numLanes;
 	
 	/** The collection of subscribers */
-	private final Vector subscribers;
+	private final Vector<EventObserver> subscribers;
 
     /**
      * Constructor for the ControlDesk class
@@ -66,10 +23,10 @@ class ControlDesk extends Thread {
 
 	public ControlDesk(int numLanes) {
 		this.numLanes = numLanes;
-		lanes = new HashSet(numLanes);
+		lanes = new HashSet<>(numLanes);
 		partyQueue = new LinkedList<>();
 
-		subscribers = new Vector();
+		subscribers = new Vector<>();
 
 		for (int i = 0; i < numLanes; i++) {
 			lanes.add(new Lane());
@@ -92,6 +49,7 @@ class ControlDesk extends Thread {
 				sleep(250);
 			} catch (Exception e) {}
 		}
+
 	}
 
     /**
@@ -100,10 +58,10 @@ class ControlDesk extends Thread {
      */
 
 	public void assignLane() {
-		Iterator it = lanes.iterator();
+		Iterator<Lane> it = lanes.iterator();
 
 		while (it.hasNext() && !partyQueue.isEmpty()) {
-			Lane curLane = (Lane) it.next();
+			Lane curLane = it.next();
 
 			if (!curLane.isPartyAssigned()) {
 				System.out.println("ok... assigning this party");
@@ -120,10 +78,10 @@ class ControlDesk extends Thread {
      *
      */
 
-	public void addPartyQueue(Vector partyNicks) {
-		Vector partyBowlers = new Vector();
-		for (int i = 0; i < partyNicks.size(); i++) {
-			Bowler newBowler = registerPatron(((String) partyNicks.get(i)));
+	public void addPartyQueue(Vector<String> partyNicks) {
+		Vector<Bowler> partyBowlers = new Vector<>();
+		for (String partyNick : partyNicks) {
+			Bowler newBowler = registerPatron(partyNick);
 			partyBowlers.add(newBowler);
 		}
 		partyQueue.add(partyBowlers);
@@ -159,13 +117,9 @@ class ControlDesk extends Thread {
      *
      */
 
-	public void publish(Vector eventObject) {
-		Iterator eventIterator = subscribers.iterator();
-		while (eventIterator.hasNext()) {
-			(
-				(EventObserver) eventIterator
-					.next())
-					.receiveEvent(eventObject);
+	public void publish(Vector<String> eventObject) {
+		for (EventObserver subscriber : subscribers) {
+			subscriber.receiveEvent(eventObject);
 		}
 	}
 
@@ -176,7 +130,7 @@ class ControlDesk extends Thread {
      *
      */
 
-	public HashSet getLanes() {
+	public HashSet<Lane> getLanes() {
 		return lanes;
 	}
 
@@ -187,8 +141,8 @@ class ControlDesk extends Thread {
 	 *
 	 */
 
-	private Vector getPartyQueue() {
-		Vector displayPartyQueue = new Vector();
+	private Vector<String> getPartyQueue() {
+		Vector<String> displayPartyQueue = new Vector<>();
 		for (Vector<Bowler> party: partyQueue) {
 			String nextParty =
 					(party.get(0)).getNick() + "'s Party";
@@ -209,7 +163,7 @@ class ControlDesk extends Thread {
 	 */
 
 	private Bowler registerPatron(String nickName) {
-		Bowler patron = null;
+		Bowler patron;
 		Dao<Bowler> bowlerDao = new BowlerDao();
 		patron = bowlerDao.getByParam(nickName);
 		return patron;

@@ -1,27 +1,5 @@
-/* AddPartyView.java
- *
- *  Version:
- * 		 $Id$
- *
- *  Revisions:
- * 		$Log: AddPartyView.java,v $
- * 		Revision 1.7  2003/02/20 02:05:53  ???
- * 		Fixed addPatron so that duplicates won't be created.
- *
- * 		Revision 1.6  2003/02/09 20:52:46  ???
- * 		Added comments.
- *
- * 		Revision 1.5  2003/02/02 17:42:09  ???
- * 		Made updates to migrate to observer model.
- *
- * 		Revision 1.4  2003/02/02 16:29:52  ???
- * 		Added ControlDeskEvent and ControlDeskObserver. Updated Queue to allow access to Vector so that contents could be viewed without destroying. Implemented observer model for most of ControlDesk.
- *
- *
- */
-
 /**
- * Class for GUI components need to add a party
+ * ViewController class for querying scores.
  *
  */
 
@@ -40,18 +18,17 @@ import java.util.List;
 
 public class QueryView implements  ListSelectionListener {
 
-    private final JFrame win;
-    private final JList partyList;
-    private final JList allBowlers;
-    private Vector party;
-    private Vector bowlerdb =  new Vector();
+    private final JList<Object> partyList;
+    private final JList<Object> allBowlers;
+    private Vector<String> party;
+    private Vector<String> bowlerdb =  new Vector<>();
 
     private String selectedMember = null;
 
 
     public QueryView() {
 
-        win = new JFrame("Query");
+        JFrame win = new JFrame("Query");
         win.getContentPane().setLayout(new BorderLayout());
         ((JPanel) win.getContentPane()).setOpaque(false);
 
@@ -63,15 +40,14 @@ public class QueryView implements  ListSelectionListener {
         partyPanel.setLayout(new FlowLayout());
         partyPanel.setBorder(new TitledBorder("Query Data"));
 
-        party = new Vector();
-        Vector empty = new Vector();
+        party = new Vector<>();
+        Vector<String> empty = new Vector<>();
         empty.add("(Empty)");
 
-        partyList = new JList(empty);
+        partyList = new JList<>(empty);
         partyList.setFixedCellWidth(120);
         partyList.setVisibleRowCount(5);
         JScrollPane partyPane = new JScrollPane(partyList);
-        //        partyPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         partyPanel.add(partyPane);
 
         // Bowler Database
@@ -84,9 +60,9 @@ public class QueryView implements  ListSelectionListener {
             bowlerDao.getAll().forEach(bowler -> bowlerdb.add(bowler.getNick()));
         } catch (Exception e) {
             System.err.println("File Error");
-            bowlerdb = new Vector();
+            bowlerdb = new Vector<>();
         }
-        allBowlers = new JList(bowlerdb);
+        allBowlers = new JList<>(bowlerdb);
         allBowlers.setVisibleRowCount(8);
         allBowlers.setFixedCellWidth(120);
         JScrollPane bowlerPane = new JScrollPane(allBowlers);
@@ -105,11 +81,16 @@ public class QueryView implements  ListSelectionListener {
         topPlayer.addActionListener(actionEvent -> {
             Dao<Score> scoreDao = new ScoreDao();
             Vector<Score> scoreRecords = scoreDao.getAll();
-            Score maxScoreRecord = Collections.max(scoreRecords
-                    , Comparator.comparingInt(o -> Integer.parseInt(o.getScore())));
-            party = new Vector();
-            party.add(maxScoreRecord.getNick() + ":" + maxScoreRecord.getScore());
-            partyList.setListData(party);
+            party = new Vector<>();
+            if(!scoreRecords.isEmpty()) {
+                Score maxScoreRecord = Collections.max(scoreRecords
+                        , Comparator.comparingInt(o -> Integer.parseInt(o.getScore())));
+                party.add(maxScoreRecord.getNick() + ":" + maxScoreRecord.getScore());
+                partyList.setListData(party);
+            }else{
+                party.add("No results");
+                partyList.setListData(party);
+            }
         });
         topPlayerPanel.add(topPlayer);
 
@@ -119,14 +100,19 @@ public class QueryView implements  ListSelectionListener {
         topThreeScores.addActionListener(actionEvent -> {
             Dao<Score> scoreDao = new ScoreDao();
             Vector<Score> scoreRecords = scoreDao.getAll();
-            scoreRecords.sort(Comparator.comparingInt(o -> -1 * Integer.parseInt(o.getScore())));
-            party = new Vector();
-            for(int i = 0 ; i < 3; i++){
-                if(scoreRecords.get(i) != null){
-                    party.add(scoreRecords.get(i).getNick() + ":" + scoreRecords.get(i).getScore() + "\n");
+            party = new Vector<>();
+            if(!scoreRecords.isEmpty()) {
+                scoreRecords.sort(Comparator.comparingInt(o -> -1 * Integer.parseInt(o.getScore())));
+                for (int i = 0; i < 3; i++) {
+                    if (scoreRecords.get(i) != null) {
+                        party.add(scoreRecords.get(i).getNick() + ":" + scoreRecords.get(i).getScore() + "\n");
+                    }
                 }
+                partyList.setListData(party);
+            }else{
+                party.add("No results");
+                partyList.setListData(party);
             }
-            partyList.setListData(party);
         });
         topThreeScoresPanel.add(topThreeScores);
 
@@ -135,12 +121,17 @@ public class QueryView implements  ListSelectionListener {
         lowestOverallScorePanel.setLayout(new FlowLayout());
         lowestOverallScore.addActionListener(actionEvent -> {
             Dao<Score> scoreDao = new ScoreDao();
+            party = new Vector<>();
             Vector<Score> scoreRecords = scoreDao.getAll();
-            Score maxScoreRecord = Collections.min(scoreRecords
-                    , Comparator.comparingInt(o -> Integer.parseInt(o.getScore())));
-            party = new Vector();
-            party.add(maxScoreRecord.getNick() + ":" + maxScoreRecord.getScore());
-            partyList.setListData(party);
+            if(!scoreRecords.isEmpty()) {
+                Score minScoreRecord = Collections.min(scoreRecords
+                        , Comparator.comparingInt(o -> Integer.parseInt(o.getScore())));
+                party.add(minScoreRecord.getNick() + ":" + minScoreRecord.getScore());
+                partyList.setListData(party);
+            }else{
+                party.add("No results");
+                partyList.setListData(party);
+            }
         });
         lowestOverallScorePanel.add(lowestOverallScore);
 
@@ -150,14 +141,19 @@ public class QueryView implements  ListSelectionListener {
         lowestThreeScores.addActionListener(actionEvent -> {
             Dao<Score> scoreDao = new ScoreDao();
             Vector<Score> scoreRecords = scoreDao.getAll();
-            scoreRecords.sort(Comparator.comparingInt(o -> Integer.parseInt(o.getScore())));
-            party = new Vector();
-            for(int i = 0 ; i < 3; i++){
-                if(scoreRecords.get(i) != null){
-                    party.add(scoreRecords.get(i).getNick() + ":" + scoreRecords.get(i).getScore() + "\n");
+            party = new Vector<>();
+            if(!scoreRecords.isEmpty()) {
+                scoreRecords.sort(Comparator.comparingInt(o -> Integer.parseInt(o.getScore())));
+                for (int i = 0; i < 3; i++) {
+                    if (scoreRecords.get(i) != null) {
+                        party.add(scoreRecords.get(i).getNick() + ":" + scoreRecords.get(i).getScore() + "\n");
+                    }
                 }
+                partyList.setListData(party);
+            }else{
+                party.add("No results");
+                partyList.setListData(party);
             }
-            partyList.setListData(party);
         });
         lowestThreeScoresPanel.add(lowestThreeScores);
 
@@ -168,15 +164,19 @@ public class QueryView implements  ListSelectionListener {
             if(selectedMember != null) {
                 Dao<Score> scoreDao = new ScoreDao();
                 Vector<Score> scoreRecords = scoreDao.getAll();
+                party = new Vector<>();
                 List<Score> filteredRecords =
                         scoreRecords.stream().filter(s -> selectedMember.equals(s.getNick())).toList();
-                party = new Vector();
-                if(filteredRecords.size() > 0){
+                if(!filteredRecords.isEmpty()){
                     for (Score record : filteredRecords) {
                         party.add(record.getNick() + ":" + record.getScore() + "\n");
                     }
+                    partyList.setListData(party);
                 }
-                partyList.setListData(party);
+                else{
+                    party.add("No results");
+                    partyList.setListData(party);
+                }
             }
         });
         selectedPlayersAllScoresPanel.add(selectedPlayersAllScores);
@@ -188,15 +188,19 @@ public class QueryView implements  ListSelectionListener {
             if(selectedMember != null) {
                 Dao<Score> scoreDao = new ScoreDao();
                 Vector<Score> scoreRecords = scoreDao.getAll();
+                party = new Vector<>();
                 List<Score> filteredRecords =
                         scoreRecords.stream().filter(s -> selectedMember.equals(s.getNick())).toList();
-                party = new Vector();
-                if(filteredRecords.size() > 0) {
+                if(!filteredRecords.isEmpty()) {
                     Score maxScoreRecord = Collections.max(filteredRecords
                             , Comparator.comparingInt(o -> Integer.parseInt(o.getScore())));
                     party.add(maxScoreRecord.getNick() + ":" + maxScoreRecord.getScore());
+                    partyList.setListData(party);
                 }
-                partyList.setListData(party);
+                else{
+                    party.add("No results");
+                    partyList.setListData(party);
+                }
             }
         });
         selectedPlayerHighestScorePanel.add(selectedPlayerHighestScore);
@@ -234,10 +238,7 @@ public class QueryView implements  ListSelectionListener {
      */
 
     public void valueChanged(ListSelectionEvent e) {
-        if (e.getSource().equals(allBowlers)) {
-            selectedMember =
-                    ((String) ((JList) e.getSource()).getSelectedValue());
-        }
+        selectedMember = ((String) ((JList<?>) e.getSource()).getSelectedValue());
     }
 
 }

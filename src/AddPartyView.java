@@ -26,7 +26,6 @@
  */
 
 import java.awt.*;
-import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.event.*;
@@ -41,12 +40,12 @@ import java.util.*;
 public class AddPartyView implements  ListSelectionListener {
 
 	private final int maxSize;
-	private final AddPartyView apv=this;
+	private final AddPartyView apv = this;
 	private final JFrame win;
-	private final JList partyList;
-	private final JList allBowlers;
-	private final Vector party;
-	private Vector bowlerdb =  new Vector();
+	private final JList<Object> partyList;
+	private final JList<Object> allBowlers;
+	private final Vector<String> party;
+	private Vector<String> bowlerdb =  new Vector<>();
 
 
 	private final ControlDeskView controlDeskView;
@@ -71,16 +70,15 @@ public class AddPartyView implements  ListSelectionListener {
 		partyPanel.setLayout(new FlowLayout());
 		partyPanel.setBorder(new TitledBorder("Your Party"));
 
-		party = new Vector();
-		Vector empty = new Vector();
+		party = new Vector<>();
+		Vector<String> empty = new Vector<>();
 		empty.add("(Empty)");
 
-		partyList = new JList(empty);
+		partyList = new JList<>(empty);
 		partyList.setFixedCellWidth(120);
 		partyList.setVisibleRowCount(5);
 		partyList.addListSelectionListener(this);
 		JScrollPane partyPane = new JScrollPane(partyList);
-		//        partyPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		partyPanel.add(partyPane);
 
 		// Bowler Database
@@ -93,9 +91,9 @@ public class AddPartyView implements  ListSelectionListener {
 			bowlerDao.getAll().forEach(bowler -> bowlerdb.add(bowler.getNick()));
 		} catch (Exception e) {
 			System.err.println("File Error");
-			bowlerdb = new Vector();
+			bowlerdb = new Vector<>();
 		}
-		allBowlers = new JList(bowlerdb);
+		allBowlers = new JList<>(bowlerdb);
 		allBowlers.setVisibleRowCount(8);
 		allBowlers.setFixedCellWidth(120);
 		JScrollPane bowlerPane = new JScrollPane(allBowlers);
@@ -111,16 +109,13 @@ public class AddPartyView implements  ListSelectionListener {
 		JButton addPatron = new JButton("Add to Party");
 		JPanel addPatronPanel = new JPanel();
 		addPatronPanel.setLayout(new FlowLayout());
-		addPatron.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent actionEvent) {
-				if (selectedNick != null && party.size() < maxSize) {
-					if (party.contains(selectedNick)) {
-						System.err.println("Member already in Party");
-					} else {
-						party.add(selectedNick);
-						partyList.setListData(party);
-					}
+		addPatron.addActionListener(actionEvent -> {
+			if (selectedNick != null && party.size() < maxSize) {
+				if (party.contains(selectedNick)) {
+					System.err.println("Member already in Party");
+				} else {
+					party.add(selectedNick);
+					partyList.setListData(party);
 				}
 			}
 		});
@@ -129,13 +124,10 @@ public class AddPartyView implements  ListSelectionListener {
 		JButton remPatron = new JButton("Remove Member");
 		JPanel remPatronPanel = new JPanel();
 		remPatronPanel.setLayout(new FlowLayout());
-		remPatron.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent actionEvent) {
-				if (selectedMember != null) {
-					party.removeElement(selectedMember);
-					partyList.setListData(party);
-				}
+		remPatron.addActionListener(actionEvent -> {
+			if (selectedMember != null) {
+				party.removeElement(selectedMember);
+				partyList.setListData(party);
 			}
 		});
 		remPatronPanel.add(remPatron);
@@ -151,14 +143,11 @@ public class AddPartyView implements  ListSelectionListener {
 		JButton finished = new JButton("Finished");
 		JPanel finishedPanel = new JPanel();
 		finishedPanel.setLayout(new FlowLayout());
-		finished.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent actionEvent) {
-				if ( party.size() > 0) {
-					controlDeskView.updateAddParty( party );
-				}
-				win.hide();
+		finished.addActionListener(actionEvent -> {
+			if ( party.size() > 0) {
+				controlDeskView.updateAddParty( party );
 			}
+			win.hide();
 		});
 		finishedPanel.add(finished);
 
@@ -194,11 +183,11 @@ public class AddPartyView implements  ListSelectionListener {
 	public void valueChanged(ListSelectionEvent e) {
 		if (e.getSource().equals(allBowlers)) {
 			selectedNick =
-				((String) ((JList) e.getSource()).getSelectedValue());
+				((String) ((JList<?>) e.getSource()).getSelectedValue());
 		}
 		if (e.getSource().equals(partyList)) {
 			selectedMember =
-				((String) ((JList) e.getSource()).getSelectedValue());
+				((String) ((JList<?>) e.getSource()).getSelectedValue());
 		}
 	}
 

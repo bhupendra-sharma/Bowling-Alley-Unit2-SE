@@ -10,9 +10,8 @@ public class ScoreDao implements  Dao<Score>{
 
     @Override
     public Score getByParam(String nickName) {
-        BufferedReader bufferedReader = null;
         try {
-            bufferedReader = new BufferedReader(new FileReader(SCOREHISTORY_FILE));
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(SCOREHISTORY_FILE));
             String data;
             while ((data = bufferedReader.readLine()) != null) {
                 String[] scoreData = data.split("\t");
@@ -30,9 +29,8 @@ public class ScoreDao implements  Dao<Score>{
     @Override
     public Vector<Score> getAll() {
         Vector<Score> scoreRecords = new Vector<>();
-        BufferedReader bufferedReader = null;
         try {
-            bufferedReader = new BufferedReader(new FileReader(SCOREHISTORY_FILE));
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(SCOREHISTORY_FILE));
             String data;
             while ((data = bufferedReader.readLine()) != null) {
                 String[] scoreData = data.split("\t");
