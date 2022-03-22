@@ -117,7 +117,9 @@ public class Lane extends Thread implements EventObserver {
 
 			} else if (isPartyAssigned) {
 				updateScoreOnGutterCondition();
-				publish(null);
+				if(party.size() >= 2) {
+					publish(null);
+				}
 				EndGamePrompt egp = new EndGamePrompt( (party.get(0)).getNick() + "'s Party" );
 				int result = egp.getResult();
 				egp.destroy();

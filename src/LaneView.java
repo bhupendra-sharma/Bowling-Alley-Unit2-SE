@@ -292,13 +292,6 @@ public class LaneView implements EventObserver {
 			}
 		}
 		else{
-/*
-			computeLeader();
-			if(first_scorer != -1 && second_scorer != -1){
-				ballLabel[first_scorer][21].setText("10");
-				ballLabel[second_scorer][21].setText("12");
-			}
-*/
 			handleExtendedDisplay();
 		}
 	}
@@ -319,7 +312,7 @@ public class LaneView implements EventObserver {
 			ballLabel[second_scorer][21 + i].setText(Integer.toString(pinsDown));
 			scoreLabel[second_scorer][10 + (i/2)].setText(Integer.toString(secondHighScore));
 		}
-
+		
 	}
 
 }
