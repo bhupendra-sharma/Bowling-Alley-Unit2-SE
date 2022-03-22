@@ -8,6 +8,7 @@ public class LaneView implements EventObserver {
 
 	private final JFrame frame;
 	private final Container cpanel;
+
 	private Vector bowlers;
 
 	private JLabel[][] ballLabel;
@@ -21,9 +22,15 @@ public class LaneView implements EventObserver {
 	private int[][] lescores;
 	private int scr;
 
+	//Variables for Extended Play
+	private JFrame win;
+	private JButton RunnerUpPlay;
+
+
 	public void computeLeader(int numBowlers){
 		 for(int i=0;i<numBowlers;i++)
 		 {
+//			 System.out.println(lescores[i][9]);
 			 if(lescores[i][9]>first)
 			 {
 				 first=lescores[i][9];
@@ -38,15 +45,15 @@ public class LaneView implements EventObserver {
 				second_scorer=i;
 			}
 		}
-		if(first_scorer!=-1)
-		System.out.println("first_scorer"+bowlers.get(first_scorer)+"Score:"+first);
-		if(second_scorer!=-1)
-		System.out.println("second_scorer"+bowlers.get(second_scorer)+"Score:"+second);
+//		if(first_scorer!=-1)
+//		System.out.println("first_scorer"+bowlers.get(first_scorer)+"Score:"+first);
+//		if(second_scorer!=-1)
+//		System.out.println("second_scorer"+bowlers.get(second_scorer)+"Score:"+second);
 
-		lane.first=first;
-		lane.second=second;
-		lane.first_scorer=first_scorer;
-		lane.second_scorer=second_scorer;
+//		lane.first=first;
+//		lane.second=second;
+//		lane.first_scorer=first_scorer;
+//		lane.second_scorer=second_scorer;
 
 	}
 	public LaneView(Lane lane, int laneNum) {
@@ -67,7 +74,62 @@ public class LaneView implements EventObserver {
 
 	}
 	public void performThreeThrow(){
+		lane.perform_called=true;
+		String first_nick = ((Bowler) bowlers.get(first_scorer)).getNick();
+		String second_nick = ((Bowler) bowlers.get(second_scorer)).getNick();
 
+		win = new JFrame("Extended Play");
+		win.getContentPane().setLayout(new BorderLayout());
+		((JPanel) win.getContentPane()).setOpaque(false);
+
+		JPanel colPanel = new JPanel();
+		colPanel.setLayout(new GridLayout(2, 1));
+
+		// Label Panel
+		JPanel labelPanel = new JPanel();
+		labelPanel.setLayout(new FlowLayout());
+
+		JLabel message = new JLabel("Winner is "+first_nick+" (Score:"+first+") and Runner up is "+second_nick+" (Score:"+second+").");
+
+		labelPanel.add(message);
+
+		// Button Panel
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.setLayout(new GridLayout(1, 2));
+
+		Insets buttonMargin = new Insets(4, 4, 4, 4);
+
+		RunnerUpPlay = new JButton("Perform RunnerUp Throw");
+		JPanel temp = new JPanel();
+		temp.setLayout(new FlowLayout());
+		temp.add(RunnerUpPlay);
+		buttonPanel.add(temp);
+		RunnerUpPlay.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+					int numBowlers=bowlers.size();
+					for(int i=0;i<numBowlers;i++){
+							win.hide();
+							ComputeWinner cw = new ComputeWinner(first,first_scorer,second,second_scorer,bowlers);
+
+					}
+			}
+		});
+
+		// Clean up main panel
+		colPanel.add(labelPanel);
+		colPanel.add(buttonPanel);
+
+		win.getContentPane().add("Center", colPanel);
+
+		win.pack();
+
+		// Center Window on Screen
+		Dimension screenSize = (Toolkit.getDefaultToolkit()).getScreenSize();
+		win.setLocation(
+				((screenSize.width) / 2) - ((win.getSize().width) / 2),
+				((screenSize.height) / 2) - ((win.getSize().height) / 2));
+		win.setVisible(true);
 	}
 	public void show() {
 		frame.setVisible(true);
@@ -249,7 +311,7 @@ public class LaneView implements EventObserver {
 //					ImageIcon iconLogo = new ImageIcon("img/10.png");
 //					ImageIcon iconLogo = new ImageIcon(new ImageIcon("img/10.png").getImage().getScaledInstance(50, 45, Image.SCALE_DEFAULT));
 						ImageIcon iconLogo;
-						if(scr==10)
+						if(scr>=10)
 							iconLogo = new ImageIcon(new ImageIcon("img/10.png").getImage().getScaledInstance(50, 45, Image.SCALE_DEFAULT));
 						if(scr==9)
 							iconLogo = new ImageIcon(new ImageIcon("img/9.png").getImage().getScaledInstance(50, 45, Image.SCALE_DEFAULT));
@@ -299,7 +361,7 @@ public class LaneView implements EventObserver {
 
 					}
 				}
-				if(((Lane)eventObject).getFrameNum() == 9 )
+//				if(((Lane)eventObject).getFrameNum() == 9 )
 				computeLeader(numBowlers);
 			}
 		}
@@ -307,3 +369,81 @@ public class LaneView implements EventObserver {
 
 
 }
+
+
+
+
+
+
+
+
+
+
+//	JFrame extendedPlayFrame = new JFrame("Extended Play");
+//		c1=extendedPlayFrame.getContentPane();
+//				JButton performOneThrow=new JButton("Perform One Throw");
+//				JPanel b1Panel=new JPanel();
+//
+//				b1Panel.setLayout(new FlowLayout());
+//
+//				b1Panel.add(performOneThrow);
+//				JLabel info = new JLabel(first_nick+" has scored "+first+",    "+second_nick+" has scored "+second+"      "+second_nick+" will perform a throw");
+//
+//				c1.setLayout(new BorderLayout());
+//				Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+//				int height = screenSize.height * 2 / 3;
+//				int width = screenSize.width * 2 / 3;
+//				extendedPlayFrame.setPreferredSize(new Dimension(width,height));
+//				extendedPlayFrame.add(performOneThrow);
+//				extendedPlayFrame.add(info);
+//				extendedPlayFrame.setVisible(true);
+//				extendedPlayFrame.show();
+//
+//				c1.add(b1Panel,"SOUTH");
+//				performOneThrow.addActionListener(new ActionListener() {
+//@Override
+//public void actionPerformed(ActionEvent e) {
+//		JFrame extendedPlayFrame1 = new JFrame();
+//		extendedPlayFrame.setVisible(false);
+//		Random r = new Random();
+//		int low = 0;
+//		int high = 20;
+//		int result = r.nextInt(high-low) + low;
+//
+//		if(result+second>first){
+//		JButton performThreeThrow=new JButton("Continue 3 Frames");
+//		JLabel info = new JLabel(second_nick+" has scored more points than "+first_nick+".New Scores:\n "+first_nick+":"+first+""+second_nick+":"+second);
+//
+//		JPanel b2Panel = new JPanel();
+//		b2Panel.setLayout(new FlowLayout());
+//
+//		b2Panel.add(performThreeThrow);
+//
+//		extendedPlayFrame1.add(performThreeThrow);
+//		extendedPlayFrame1.add(info);
+//		performThreeThrow.addActionListener(new ActionListener() {
+//@Override
+//public void actionPerformed(ActionEvent e) {
+//
+//		}
+//		});
+//
+//		}
+//		else
+//		{
+//		JButton finish=new JButton("Finish");
+//		JLabel info = new JLabel(first_nick+" still has more score than "+second_nick+" after one throw.New Scores:\n "+first_nick+":"+first+""+second_nick+":"+second);
+//		extendedPlayFrame1.add(finish);
+//		extendedPlayFrame1.add(info);
+//		finish.addActionListener(new ActionListener() {
+//@Override
+//public void actionPerformed(ActionEvent e) {
+//		lane.completed=true;
+//		}
+//		});
+//		}
+//		extendedPlayFrame1.setVisible(true);
+//		extendedPlayFrame1.getContentPane().setSize(800,400);
+//
+//		}
+//		});

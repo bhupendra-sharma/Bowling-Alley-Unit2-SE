@@ -5,7 +5,7 @@ import java.util.Iterator;
 import java.util.HashMap;
 import java.util.Date;
 import javax.swing.*;
-import java.util.Random;
+
 
 public class Lane extends Thread implements EventObserver {
 	private Vector<Bowler> party;
@@ -16,7 +16,8 @@ public class Lane extends Thread implements EventObserver {
 	public int first_scorer = -1 , second_scorer = -1 ,first=-1,second=-1;
 
 	private boolean gameIsHalted;
-	private boolean completed=false;
+	public boolean completed=false;
+	public boolean perform_called=false;
 
 	private boolean partyAssigned;
 	private boolean gameFinished;
@@ -136,56 +137,14 @@ public class Lane extends Thread implements EventObserver {
 			} else if (partyAssigned && gameFinished) {
 
 				//Code for point 5
-				JFrame extendedPlayFrame = new JFrame();
-				JButton performOneThrow=new JButton("Perform One Throw");
-				JLabel info = new JLabel(party.get(first_scorer)+" has scored "+first+","+party.get(second_scorer)+" has scored "+second+"\n"+party.get(second_scorer)+" will perform a throw");
-				extendedPlayFrame.add(performOneThrow);
-				extendedPlayFrame.add(info);
-				extendedPlayFrame.setVisible(true);
-				performOneThrow.addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						JFrame extendedPlayFrame1 = new JFrame();
-						extendedPlayFrame.setVisible(false);
-						Random r = new Random();
-						int low = 0;
-						int high = 20;
-						int result = r.nextInt(high-low) + low;
-
-						if(result+second>first){
-							JButton performThreeThrow=new JButton("Continue 3 Frames");
-							JLabel info = new JLabel(party.get(second_scorer)+" has scored more points than "+party.get(first_scorer)+".New Scores:\n "+party.get(first_scorer)+":"+first+""+party.get(second_scorer)+":"+second);
-							extendedPlayFrame1.add(performThreeThrow);
-							extendedPlayFrame1.add(info);
-							performThreeThrow.addActionListener(new ActionListener() {
-								@Override
-								public void actionPerformed(ActionEvent e) {
-									for(EventObserver subscriber:subscribers){
-										if(subscriber instanceof LaneView){
-											((LaneView) subscriber).performThreeThrow();
-											break;
-										}
-									}
-								}
-							});
-						}
-						else
-						{
-							JButton finish=new JButton("Finish");
-							JLabel info = new JLabel(party.get(first_scorer)+" still has more score than "+party.get(second_scorer)+".New Scores:\n "+party.get(first_scorer)+":"+first+""+party.get(second_scorer)+":"+second);
-							extendedPlayFrame1.add(finish);
-							extendedPlayFrame1.add(info);
-							finish.addActionListener(new ActionListener() {
-								@Override
-								public void actionPerformed(ActionEvent e) {
-									completed=true;
-								}
-							});
-						}
-						extendedPlayFrame1.setVisible(true);
-
+				if(!perform_called)
+				for(EventObserver subscriber:subscribers){
+					if(subscriber instanceof LaneView){
+						((LaneView) subscriber).performThreeThrow();
+						break;
 					}
-				});
+				}
+
 				if(completed){EndGamePrompt egp = new EndGamePrompt( (party.get(0)).getNick() + "'s Party" );
 					int result = egp.getResult();
 					egp.destroy();
