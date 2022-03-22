@@ -319,9 +319,33 @@ public class LaneView implements EventObserver {
 				scoreLabel[second_scorer][10 + (i / 2)].setText(Integer.toString(secondHighScore));
 			}
 		}
-		String winner = firstHighScore > secondHighScore ? ((Bowler) bowlers.get(first_scorer)).getNick() :
-				((Bowler) bowlers.get(second_scorer)).getNick();
-		JOptionPane.showMessageDialog(frame,"Winner is " + winner);
+		showWinner(firstHighScore, secondHighScore);
+	}
+
+	private void showWinner(int firstHighScore, int secondHighScore){
+		//If there is a tie
+		String winner;
+		if(firstHighScore == secondHighScore){
+			int[] firstScorerData = (int[]) lane.scores.get(bowlers.get(first_scorer));
+			int[] secondScorerData = (int[]) lane.scores.get(bowlers.get(second_scorer));
+			int firstStrikesCount = 0;
+			int secondStrikesCount = 0;
+			for(int i = 0; i < firstScorerData.length; i++){
+				if(firstScorerData[i] == 10){
+					firstStrikesCount++;
+				}
+				if(secondScorerData[i] == 10){
+					secondStrikesCount++;
+				}
+			}
+			winner = firstStrikesCount > secondStrikesCount ? ((Bowler) bowlers.get(first_scorer)).getNick() :
+					((Bowler) bowlers.get(second_scorer)).getNick();
+		}
+		else{
+			winner = firstHighScore > secondHighScore ? ((Bowler) bowlers.get(first_scorer)).getNick() :
+					((Bowler) bowlers.get(second_scorer)).getNick();
+		}
+		JOptionPane.showMessageDialog(frame, "Winner is " + winner);
 	}
 
 }
