@@ -63,7 +63,7 @@ class ControlDesk extends Thread {
 		while (it.hasNext() && !partyQueue.isEmpty()) {
 			Lane curLane = it.next();
 
-			if (!curLane.isPartyAssigned()) {
+			if (!curLane.isPartyAssigned) {
 				System.out.println("ok... assigning this party");
 				curLane.assignParty(partyQueue.poll());
 			}

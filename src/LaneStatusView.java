@@ -39,7 +39,7 @@ public class LaneStatusView implements EventObserver {
 		psShowing=false;
 
 		psv = new PinSetterView( laneNum );
-		Pinsetter ps = lane.getPinsetter();
+		Pinsetter ps = lane.setter;
 		ps.subscribe(psv);
 
 		lv = new LaneView( lane, laneNum );
@@ -65,7 +65,7 @@ public class LaneStatusView implements EventObserver {
 		viewLane.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
-				if ( lane.isPartyAssigned() ) {
+				if ( lane.isPartyAssigned ) {
 					if (!laneShowing) {
 						lv.show();
 						laneShowing=true;
@@ -84,8 +84,7 @@ public class LaneStatusView implements EventObserver {
 		viewPinSetter.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
-				if ( lane.isPartyAssigned() ) {
-
+				if ( lane.isPartyAssigned ) {
 						if (!psShowing) {
 							psv.show();
 							psShowing=true;
@@ -106,7 +105,7 @@ public class LaneStatusView implements EventObserver {
 		maintenance.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
-				if ( lane.isPartyAssigned() ) {
+				if ( lane.isPartyAssigned ) {
 					lane.unPauseGame();
 					maintenance.setBackground( Color.GREEN );
 				}
@@ -142,10 +141,10 @@ public class LaneStatusView implements EventObserver {
 		}
 		else if(eventObject instanceof Lane){
 			curBowler.setText( ( ((Lane)eventObject).getBowlerNickName()) );
-			if ( ((Lane)eventObject).isMechanicalProblem() ) {
+			if ( ((Lane)eventObject).gameIsHalted ) {
 				maintenance.setBackground( Color.RED );
 			}
-			if (!lane.isPartyAssigned()) {
+			if (!lane.isPartyAssigned) {
 				viewLane.setEnabled( false );
 				viewPinSetter.setEnabled( false );
 			} else {

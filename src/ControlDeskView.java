@@ -95,7 +95,7 @@ public class ControlDeskView implements  EventObserver{
 			Lane curLane = (Lane) it.next();
 			LaneStatusView laneStat = new LaneStatusView(curLane,(laneCount+1));
 			curLane.subscribe(laneStat);
-			(curLane.getPinsetter()).subscribe(laneStat);
+			(curLane.setter).subscribe(laneStat);
 			JPanel lanePanel = laneStat.showLane();
 			lanePanel.setBorder(new TitledBorder("Lane" + ++laneCount ));
 			laneStatusPanel.add(lanePanel);

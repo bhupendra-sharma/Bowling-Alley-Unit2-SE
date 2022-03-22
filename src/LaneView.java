@@ -15,10 +15,33 @@ public class LaneView implements EventObserver {
 
 	private final Lane lane;
 
-	private JButton PerformThrow;
-
-
+	private int first_scorer = -1 , second_scorer = -1 ,first=-1,second=-1;
+	private int[][] lescores;
 	private int scr;
+
+	public void computeLeader(){
+		for(int i = 0;i < lane.party.size(); i++)
+		{
+			if(lescores[i][9]>first)
+			{
+				first=lescores[i][9];
+				first_scorer=i;
+			}
+		}
+		for(int i=0; i < lane.party.size(); i++)
+		{
+			if(lescores[i][9]>second && i!=first_scorer)
+			{
+				second=lescores[i][9];
+				second_scorer=i;
+			}
+		}
+		if(first_scorer!=-1)
+			System.out.println("first_scorer"+bowlers.get(first_scorer)+"Score:"+first);
+		if(second_scorer!=-1)
+			System.out.println("second_scorer"+bowlers.get(second_scorer)+"Score:"+second);
+
+	}
 	public LaneView(Lane lane, int laneNum) {
 
 		this.lane = lane;
@@ -55,25 +78,27 @@ public class LaneView implements EventObserver {
 
 		panel.setLayout(new GridLayout(0, 1));
 
-		JPanel[][] balls = new JPanel[numBowlers][25];
-		ballLabel = new JLabel[numBowlers][25];
-		JPanel[][] scores = new JPanel[numBowlers][11];
-		scoreLabel = new JLabel[numBowlers][11];
-		JPanel[][] ballGrid = new JPanel[numBowlers][11];
+		JPanel[][] balls = new JPanel[numBowlers][30];
+		ballLabel = new JLabel[numBowlers][30];
+		JPanel[][] scores = new JPanel[numBowlers][15];
+		scoreLabel = new JLabel[numBowlers][14];
+		JPanel[][] ballGrid = new JPanel[numBowlers][14];
 		JPanel[] pins = new JPanel[numBowlers];
 
 		for (int i = 0; i != numBowlers; i++) {
-			for (int j = 0; j != 23; j++) {
+			for (int j = 0; j != 29; j++) {
 				ballLabel[i][j] = new JLabel(" ");
 				balls[i][j] = new JPanel();
 				balls[i][j].setBorder(
 						BorderFactory.createLineBorder(Color.BLACK));
 				balls[i][j].add(ballLabel[i][j]);
 			}
-			ballLabel[i][24] = new JLabel(" ",JLabel.CENTER);
-			balls[i][24] = new JPanel();
-			balls[i][24].setBorder(BorderFactory.createLineBorder(Color.BLACK));
-			balls[i][24].add(ballLabel[i][24]);
+
+			int j=29;
+			ballLabel[i][j] = new JLabel(" ",JLabel.CENTER);
+			balls[i][j] = new JPanel();
+			balls[i][j].setBorder(BorderFactory.createLineBorder(Color.BLACK));
+			balls[i][j].add(ballLabel[i][j]);
 		}
 
 		for (int i = 0; i != numBowlers; i++) {
@@ -90,10 +115,22 @@ public class LaneView implements EventObserver {
 			ballGrid[i][j].add(balls[i][2 * j]);
 			ballGrid[i][j].add(balls[i][2 * j + 1]);
 			ballGrid[i][j].add(balls[i][2 * j + 2]);
-			j = 10;
+
+			//Hidden 11,12,13 th frame for computing leader
+			for (j = 10; j <= 12; j++) {
+				ballGrid[i][j] = new JPanel();
+				ballGrid[i][j].setLayout(new GridLayout(0, 3));
+				ballGrid[i][j].add(new JLabel("  "), BorderLayout.EAST);
+				ballGrid[i][j].add(balls[i][2 * j + 1], BorderLayout.EAST);
+				ballGrid[i][j].add(balls[i][2 * j + 2], BorderLayout.EAST);
+			}
+
+
+			//Emoticon box
+			j = 13;
 			ballGrid[i][j] = new JPanel();
 			ballGrid[i][j].setLayout(new GridLayout(0, 1));
-			ballGrid[i][j].add(balls[i][24]);
+			ballGrid[i][j].add(balls[i][27]);
 		}
 
 		for (int i = 0; i != numBowlers; i++) {
@@ -101,8 +138,9 @@ public class LaneView implements EventObserver {
 			pins[i].setBorder(
 					BorderFactory.createTitledBorder(
 							((Bowler) bowlers.get(i)).getNick()));
-			pins[i].setLayout(new GridLayout(0, 11));
-			for (int k = 0; k != 10; k++) {
+			pins[i].setLayout(new GridLayout(0, 14));
+
+			for (int k = 0; k != 13; k++) {
 				scores[i][k] = new JPanel();
 				scoreLabel[i][k] = new JLabel("  ", SwingConstants.CENTER);
 				scores[i][k].setBorder(
@@ -110,15 +148,19 @@ public class LaneView implements EventObserver {
 				scores[i][k].setLayout(new GridLayout(0, 1));
 				scores[i][k].add(ballGrid[i][k], BorderLayout.EAST);
 				scores[i][k].add(scoreLabel[i][k], BorderLayout.SOUTH);
+				//if(k>=10)
+				//	scores[i][k].setVisible(false);
 				pins[i].add(scores[i][k], BorderLayout.EAST);
 			}
-			scores[i][10] = new JPanel();
-			scoreLabel[i][10] = new JLabel("  ", SwingConstants.CENTER);
-			scores[i][10].setBorder(
+
+			int j=13;
+			scores[i][j] = new JPanel();
+			scoreLabel[i][j] = new JLabel("  ", SwingConstants.CENTER);
+			scores[i][j].setBorder(
 					BorderFactory.createLineBorder(Color.BLACK));
-			scores[i][10].setLayout(new GridLayout(0, 1));
-			scores[i][10].add(ballGrid[i][10], BorderLayout.CENTER);
-			pins[i].add(scores[i][10], BorderLayout.EAST);
+			scores[i][j].setLayout(new GridLayout(0, 1));
+			scores[i][j].add(ballGrid[i][j], BorderLayout.CENTER);
+			pins[i].add(scores[i][j], BorderLayout.EAST);
 			panel.add(pins[i]);
 		}
 
@@ -128,8 +170,8 @@ public class LaneView implements EventObserver {
 
 	public void receiveEvent(Object eventObject) {
 		if(eventObject instanceof Lane) {
-			if (lane.isPartyAssigned()) {
-				int numBowlers = ((Lane)eventObject).getParty().size();
+			if (lane.isPartyAssigned) {
+				int numBowlers = ((Lane)eventObject).party.size();
 				while (!initDone) {
 					//System.out.println("chillin' here.");
 					try {
@@ -138,12 +180,12 @@ public class LaneView implements EventObserver {
 					}
 				}
 
-				if (((Lane)eventObject).getFrameNum() == 1
-						&& ((Lane)eventObject).getBall() == 0
-						&& ((Lane)eventObject).getIndex() == 0) {
+				if (((Lane)eventObject).getFrameNumber() == 1
+						&& ((Lane)eventObject).ball == 0
+						&& ((Lane)eventObject).bowlIndex == 0) {
 					System.out.println("Making the frame.");
 					cpanel.removeAll();
-					cpanel.add(makeFrame(((Lane)eventObject).getParty()), "Center");
+					cpanel.add(makeFrame(((Lane)eventObject).party), "Center");
 
 					// Button Panel
 					JPanel buttonPanel = new JPanel();
@@ -159,19 +201,19 @@ public class LaneView implements EventObserver {
 					JPanel simulatePanel = new JPanel();
 					simulatePanel.setLayout(new FlowLayout());
 					simulate.addActionListener(actionEvent -> {
-						lane.set_simulate_game(true);
-						System.out.println("Simulate Pressed:" + lane.get_simulate_game());
+						lane.simulate_game = true;
+						System.out.println("Simulate Pressed:" + lane.simulate_game);
 					});
 					simulatePanel.add(simulate);
 
-					PerformThrow = new JButton("Perform Throw");
+					JButton performThrow = new JButton("Perform Throw");
 					JPanel PerformThrowPanel = new JPanel();
 					PerformThrowPanel.setLayout(new FlowLayout());
-					PerformThrow.addActionListener(actionEvent -> {
-						lane.set_perform_throw(true);
-						System.out.println("Perform Throw Pressed:"+lane.get_perform_throw());
+					performThrow.addActionListener(actionEvent -> {
+						lane.perform_throw = true;
+						System.out.println("Perform Throw Pressed:" + lane.perform_throw);
 					});
-					PerformThrowPanel.add(PerformThrow);
+					PerformThrowPanel.add(performThrow);
 
 					buttonPanel.add(maintenancePanel);
 					buttonPanel.add(PerformThrowPanel);
@@ -183,9 +225,9 @@ public class LaneView implements EventObserver {
 
 				}
 
-				int[][] lescores = ((Lane)eventObject).getCumulScore();
+				lescores = ((Lane)eventObject).cumulScores;
 				for (int k = 0; k < numBowlers; k++) {
-					for (int i = 0; i <= ((Lane)eventObject).getFrameNum() - 1; i++) {
+					for (int i = 0; i <= ((Lane)eventObject).getFrameNumber() - 1; i++) {
 						if (lescores[k][i] != 0)
 							scoreLabel[k][i].setText(
 									(Integer.toString(lescores[k][i])));
@@ -215,30 +257,69 @@ public class LaneView implements EventObserver {
 							iconLogo = new ImageIcon(new ImageIcon("img/0.png").getImage().getScaledInstance(50, 45, Image.SCALE_DEFAULT));
 						else
 							iconLogo = new ImageIcon(new ImageIcon("img/grey.png").getImage().getScaledInstance(50, 45, Image.SCALE_DEFAULT));
-						if(scr >= 0 && scr <= 10)
-							ballLabel[k][24].setIcon(iconLogo);
+						if(scr>=0&&scr<=10)
+							ballLabel[k][27].setIcon(iconLogo);
 					}
 					for (int i = 0; i < 21; i++) {
-						if (((int[]) (((Lane)eventObject).getScore()).get(bowlers.get(k)))[i] != -1)
-							if (((int[]) (((Lane)eventObject).getScore()).get(bowlers.get(k)))[i] == 10
+						if (((int[]) (((Lane)eventObject).scores)
+								.get(bowlers.get(k)))[i]
+								!= -1)
+							if (((int[]) (((Lane)eventObject).scores)
+									.get(bowlers.get(k)))[i]
+									== 10
 									&& (i % 2 == 0 || i == 19))
 								ballLabel[k][i].setText("X");
-							else if (i > 0 && ((int[]) (((Lane)eventObject).getScore()).get(bowlers.get(k)))[i]
-									+ ((int[]) (((Lane)eventObject).getScore()).get(bowlers.get(k)))[i - 1] == 10
-									&& i % 2 == 1)
+							else if (
+									i > 0
+											&& ((int[]) (((Lane)eventObject).scores)
+											.get(bowlers.get(k)))[i]
+											+ ((int[]) (((Lane)eventObject).scores)
+											.get(bowlers.get(k)))[i
+											- 1]
+											== 10
+											&& i % 2 == 1)
 								ballLabel[k][i].setText("/");
-							else if (((int[]) (((Lane)eventObject).getScore()).get(bowlers.get(k)))[i] == -2) {
+							else if (((int[]) (((Lane)eventObject).scores).get(bowlers.get(k)))[i] == -2) {
+
 								ballLabel[k][i].setText("F");
 							} else
-								ballLabel[k][i].setText((Integer.toString(
-										((int[]) (((Lane)eventObject).getScore()).get(bowlers.get(k)))[i])));
+								ballLabel[k][i].setText(
+										(Integer.toString(((int[]) (((Lane)eventObject).scores)
+												.get(bowlers.get(k)))[i])));
 
 					}
 				}
-
 			}
+		}
+		else{
+/*
+			computeLeader();
+			if(first_scorer != -1 && second_scorer != -1){
+				ballLabel[first_scorer][21].setText("10");
+				ballLabel[second_scorer][21].setText("12");
+			}
+*/
+			handleExtendedDisplay();
 		}
 	}
 
+	private void handleExtendedDisplay(){
+		computeLeader();
+		Random randomGenerator = new Random();
+		int firstHighScore = lane.cumulScores[first_scorer][9];
+		int secondHighScore = lane.cumulScores[second_scorer][9];
+		int pinsDown;
+		for(int i = 0; i < 6; i++){
+			pinsDown = randomGenerator.nextInt(3) + 1;
+			ballLabel[first_scorer][21 + i].setText(Integer.toString(pinsDown));
+			firstHighScore += pinsDown;
+			scoreLabel[first_scorer][10 + (i/2)].setText(Integer.toString(firstHighScore));
+			pinsDown = randomGenerator.nextInt(3) + 1;
+			secondHighScore += pinsDown;
+			ballLabel[second_scorer][21 + i].setText(Integer.toString(pinsDown));
+			scoreLabel[second_scorer][10 + (i/2)].setText(Integer.toString(secondHighScore));
+		}
+
+	}
 
 }

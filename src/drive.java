@@ -73,12 +73,5 @@ public class drive {
 				((screenSize.width) / 2) - ((window.getSize().width) / 2),
 				((screenSize.height) / 2) - ((window.getSize().height) / 2));
 		window.show();
-
-
-
-//		ControlDesk controlDesk = new ControlDesk( numLanes );0
-//		ControlDeskView cdv = new ControlDeskView( controlDesk, maxPatronsPerParty);
-//		controlDesk.subscribe( cdv );
-
 	}
 }
