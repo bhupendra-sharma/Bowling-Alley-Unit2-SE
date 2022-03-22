@@ -78,15 +78,15 @@ public class LaneView implements EventObserver {
 
 		panel.setLayout(new GridLayout(0, 1));
 
-		JPanel[][] balls = new JPanel[numBowlers][30];
-		ballLabel = new JLabel[numBowlers][30];
-		JPanel[][] scores = new JPanel[numBowlers][15];
-		scoreLabel = new JLabel[numBowlers][14];
-		JPanel[][] ballGrid = new JPanel[numBowlers][14];
+		JPanel[][] balls = new JPanel[numBowlers][32];
+		ballLabel = new JLabel[numBowlers][32];
+		JPanel[][] scores = new JPanel[numBowlers][16];
+		scoreLabel = new JLabel[numBowlers][15];
+		JPanel[][] ballGrid = new JPanel[numBowlers][15];
 		JPanel[] pins = new JPanel[numBowlers];
 
 		for (int i = 0; i != numBowlers; i++) {
-			for (int j = 0; j != 29; j++) {
+			for (int j = 0; j != 31; j++) {
 				ballLabel[i][j] = new JLabel(" ");
 				balls[i][j] = new JPanel();
 				balls[i][j].setBorder(
@@ -94,7 +94,7 @@ public class LaneView implements EventObserver {
 				balls[i][j].add(ballLabel[i][j]);
 			}
 
-			int j=29;
+			int j=31;
 			ballLabel[i][j] = new JLabel(" ",JLabel.CENTER);
 			balls[i][j] = new JPanel();
 			balls[i][j].setBorder(BorderFactory.createLineBorder(Color.BLACK));
@@ -117,7 +117,7 @@ public class LaneView implements EventObserver {
 			ballGrid[i][j].add(balls[i][2 * j + 2]);
 
 			//Hidden 11,12,13 th frame for computing leader
-			for (j = 10; j <= 12; j++) {
+			for (j = 10; j <= 13; j++) {
 				ballGrid[i][j] = new JPanel();
 				ballGrid[i][j].setLayout(new GridLayout(0, 3));
 				ballGrid[i][j].add(new JLabel("  "), BorderLayout.EAST);
@@ -127,10 +127,10 @@ public class LaneView implements EventObserver {
 
 
 			//Emoticon box
-			j = 13;
+			j = 14;
 			ballGrid[i][j] = new JPanel();
 			ballGrid[i][j].setLayout(new GridLayout(0, 1));
-			ballGrid[i][j].add(balls[i][27]);
+			ballGrid[i][j].add(balls[i][29]);
 		}
 
 		for (int i = 0; i != numBowlers; i++) {
@@ -138,9 +138,9 @@ public class LaneView implements EventObserver {
 			pins[i].setBorder(
 					BorderFactory.createTitledBorder(
 							((Bowler) bowlers.get(i)).getNick()));
-			pins[i].setLayout(new GridLayout(0, 14));
+			pins[i].setLayout(new GridLayout(0, 15));
 
-			for (int k = 0; k != 13; k++) {
+			for (int k = 0; k != 14; k++) {
 				scores[i][k] = new JPanel();
 				scoreLabel[i][k] = new JLabel("  ", SwingConstants.CENTER);
 				scores[i][k].setBorder(
@@ -153,7 +153,7 @@ public class LaneView implements EventObserver {
 				pins[i].add(scores[i][k], BorderLayout.EAST);
 			}
 
-			int j=13;
+			int j=14;
 			scores[i][j] = new JPanel();
 			scoreLabel[i][j] = new JLabel("  ", SwingConstants.CENTER);
 			scores[i][j].setBorder(
@@ -258,7 +258,7 @@ public class LaneView implements EventObserver {
 						else
 							iconLogo = new ImageIcon(new ImageIcon("img/grey.png").getImage().getScaledInstance(50, 45, Image.SCALE_DEFAULT));
 						if(scr>=0&&scr<=10)
-							ballLabel[k][27].setIcon(iconLogo);
+							ballLabel[k][29].setIcon(iconLogo);
 					}
 					for (int i = 0; i < 21; i++) {
 						if (((int[]) (((Lane)eventObject).scores)
@@ -302,17 +302,26 @@ public class LaneView implements EventObserver {
 		int firstHighScore = lane.cumulScores[first_scorer][9];
 		int secondHighScore = lane.cumulScores[second_scorer][9];
 		int pinsDown;
-		for(int i = 0; i < 6; i++){
-			pinsDown = randomGenerator.nextInt(3) + 1;
-			ballLabel[first_scorer][21 + i].setText(Integer.toString(pinsDown));
-			firstHighScore += pinsDown;
-			scoreLabel[first_scorer][10 + (i/2)].setText(Integer.toString(firstHighScore));
-			pinsDown = randomGenerator.nextInt(3) + 1;
-			secondHighScore += pinsDown;
-			ballLabel[second_scorer][21 + i].setText(Integer.toString(pinsDown));
-			scoreLabel[second_scorer][10 + (i/2)].setText(Integer.toString(secondHighScore));
+		pinsDown = randomGenerator.nextInt(8) + 1;
+		secondHighScore += pinsDown;
+		scoreLabel[first_scorer][10].setText(Integer.toString(firstHighScore));
+		ballLabel[second_scorer][21].setText(Integer.toString(pinsDown));
+		scoreLabel[second_scorer][10].setText(Integer.toString(secondHighScore));
+		if(secondHighScore > firstHighScore) {
+			for (int i = 2; i < 8; i++) {
+				pinsDown = randomGenerator.nextInt(3) + 1;
+				ballLabel[first_scorer][21 + i].setText(Integer.toString(pinsDown));
+				firstHighScore += pinsDown;
+				scoreLabel[first_scorer][10 + (i / 2)].setText(Integer.toString(firstHighScore));
+				pinsDown = randomGenerator.nextInt(3) + 1;
+				secondHighScore += pinsDown;
+				ballLabel[second_scorer][21 + i].setText(Integer.toString(pinsDown));
+				scoreLabel[second_scorer][10 + (i / 2)].setText(Integer.toString(secondHighScore));
+			}
 		}
-		
+		String winner = firstHighScore > secondHighScore ? ((Bowler) bowlers.get(first_scorer)).getNick() :
+				((Bowler) bowlers.get(second_scorer)).getNick();
+		JOptionPane.showMessageDialog(frame,"Winner is " + winner);
 	}
 
 }
